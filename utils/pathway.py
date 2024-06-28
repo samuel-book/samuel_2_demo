@@ -358,9 +358,75 @@ class Pathway:
         ax2.set_xlabel('Scenario')
         ax2.grid(axis = 'y')
 
+
+        plt.title('Predicted pathway changes across all stroke teams')
         plt.tight_layout(pad=2)
 
         plt.savefig('./output/sim_results_summary.jpg', dpi=300)
+        
+        # Show if required
+        if show:
+            plt.show()
+        
+        plt.close()
+
+    def plot_team_results(self, team, show=False):
+
+        """Plot and save overall simulation results"""
+
+        fig = plt.figure(figsize=(10,7))
+
+        team_results = self.sim_results[self.sim_results['stroke_team'] == team]
+
+        # Set index to scenario
+        team_results.set_index('scenario', inplace=True)
+
+        rows = ['base',
+             'onset',
+             'speed',
+             'benchmark',
+             'speed_onset',
+             'speed_benchmark',
+             'onset_benchmark',
+             'speed_onset_benchmark']
+        
+        # reorder rows to above
+        team_results = team_results.reindex(rows)
+
+        x = list(team_results.index)
+
+
+        # Replace all _ in x with + for plotting
+        x = [i.replace('_', '+') for i in x]
+
+        ax1 = fig.add_subplot(121)        
+        y1 = team_results['Percent_Thrombolysis_(mean)'].values
+        ax1.bar(x,y1)
+        max_y = max(y1.max(), 20)
+        ax1.set_ylim(0,max_y)
+        plt.xticks(rotation=90)
+        plt.yticks(np.arange(0,max_y+2,2))
+        ax1.set_title('Thrombolysis use (%)')
+        ax1.set_ylabel('Thrombolysis use (%)')
+        ax1.set_xlabel('Scenario')
+        ax1.grid(axis = 'y')
+
+        ax2 = fig.add_subplot(122)
+        y1 = team_results['Additional_good_outcomes_per_1000_patients_(mean)'].values
+        ax2.bar(x,y1, color='r')
+        max_y = max(y1.max(), 20)
+        ax2.set_ylim(0, max_y)
+        plt.xticks(rotation=90)
+        plt.yticks(np.arange(0,max_y+2,2))
+        ax2.set_title('Additional good outcomes\nper 1,000 admissions')
+        ax2.set_ylabel('Additional good outcomes\nper 1,000 admissions')
+        ax2.set_xlabel('Scenario')
+        ax2.grid(axis = 'y')
+
+        plt.title(f'Predicted pathway changes for stroke team: {team}')
+        plt.tight_layout(pad=2)
+
+        plt.savefig(f'./output/sim_results_team_{team}.jpg', dpi=300)
         
         # Show if required
         if show:
