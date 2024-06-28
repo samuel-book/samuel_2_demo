@@ -1,0 +1,15 @@
+name: sam_demo
+channels:
+  - defaults
+dependencies:
+  - jupyter
+  - jupyterlab
+  - matplotlib=3.8.0
+  - numpy=1.26.0
+  - pip
+  - pandas=2.1.1
+  - python=3.10
+  - scikit-learn
+  - pip:
+    - shap==0.43.0
+    - xgboost==2.0.2
