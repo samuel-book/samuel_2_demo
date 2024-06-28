@@ -65,7 +65,7 @@ The artificial_patient_pathway_data is generated in a similar way. For each feat
 * Use of thrombolysis (Y/N)
 * Scan-to-thrombolysis time (minutes, if appropriate, rounded to closest 5 mins)
 
-Stroke teams have been anonymised (but are not calculated to align patients with the same stroke team name in the artificial machine learning patient data, as this is for demonstration purposes only), and all stroke teams have 500 artificial patients generated.
+Stroke teams are the same teams as the artificial ML data. 500 patients have been generated per team.
 
 
 ## Environment
