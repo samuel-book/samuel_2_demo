@@ -1,0 +1,25 @@
+# Folders to ignore
+data/
+temp/
+output/
+pickled_models/
+
+# Ignore file types that may contain data or models
+*.p
+*.pkl
+*.csv
+*.xlsx
+*.txt
+
+# Ignore all checkpoints folders
+**/.ipynb_checkpoints/
+
+# Ignore .pyc files
+*.pyc
+
+# Ignore PyCharm files
+.idea
+
+# Ignore cache files (stored in this folder)
+**/__pycache__/
+
