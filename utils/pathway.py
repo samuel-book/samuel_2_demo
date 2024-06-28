@@ -19,6 +19,17 @@ class Pathway:
         # Load benchmark data
         self.benchmark_thrombolysis = pd.read_csv(
             './output/thrombolysis_rates.csv', index_col=0)
+        
+        # Get list of stroke_teams in hospital_performance_original and benchmark_thrombolysis
+        self.stroke_teams = self.hospital_performance_original['stroke_team'].unique()
+        self.benchmark_teams = self.benchmark_thrombolysis.index.unique()
+        # Find overlap
+        self.overlap_teams = list(set(self.stroke_teams) & set(self.benchmark_teams))
+        # Limit data sets to overlap
+        self.hospital_performance_original = self.hospital_performance_original[
+            self.hospital_performance_original['stroke_team'].isin(self.overlap_teams)]
+        self.benchmark_thrombolysis = self.benchmark_thrombolysis[
+            self.benchmark_thrombolysis.index.isin(self.overlap_teams)]
 
 #       
     def model_ssnap_pathway_scenarios(self, hospital_performance):
