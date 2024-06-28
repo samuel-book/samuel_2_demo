@@ -29,7 +29,9 @@ Both sets of models are for patients arriving within 4 hours of known stroke ons
 
 ### Machine Learning
 
-Artificial patient data is created by sampling feature values (with replacement, and rounding) independently from patients attending 119 different stroke teams. Sampling is performed for each stroke team. These data do not maintain covariances in the original data (except that stroke severity is sampled separately for ischaemic and non-ischaemic stroke patients). These artificial patients are intended to demonstrate our machine learning models, and are not suitable for any clinical research into stroke. Each artificial patient has the following features.
+Artificial patient data is created by sampling feature values (with replacement, and rounding) independently from patients attending 119 different stroke teams. Sampling is performed for each stroke team. These data do not maintain covariances in the original data (except that stroke severity is sampled separately for ischaemic and non-ischaemic stroke patients). These data do not include actual use of thrombolysis or outcomes; Patient data was passed to models to predict probabilities of patients receiving thrombolysis, and then passed to a model to predict disability (mRS) on discharge from inpatient care. Use of thrombolysis and outcomes were sampled from distributions based on probabilities, and these outputs added to the artificial patients. While the artificial data does not maintain covariance of features, the labelling with use of thrombolysis and outcome will maintain interactions between features.
+
+These artificial patients are intended to demonstrate our machine learning models, and are not suitable for any clinical research into stroke. Each artificial patient has the following features.
 
 * Stroke team (anonymised)
 * Infarction (Y/N)
@@ -47,7 +49,7 @@ Artificial patient data is created by sampling feature values (with replacement,
 
 Stroke teams have been anonymised, and all stroke teams have 500 artificial patients generated.
 
-Patient data was passed to models to predict probabilities of patients receiving thrombolysis, and then passed to a model to predict disability (mRS) on discharge from inpatient care. Use of thrombolysis and outcomes were sampled from distributions based on probabilities, and these outputs added to the artificial patients. While the artificial data does not maintain covariance of features, the labelling with use of thrombolysis and outcome will maintain interactions between features.
+
 
 ## Data for pathway model
 
