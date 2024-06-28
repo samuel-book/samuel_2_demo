@@ -47,7 +47,7 @@ These artificial patients are intended to demonstrate our machine learning model
 * Onset during sleep (all are then labelled as having imprecise onset times)
 * Stroke Severity (NIHSS)
     Stroke severity is sampled separately for ischaemic and non-ischaemic strokes
-* Atrial fibrillation coagulant (all also given a diagnosis of atrial fibrillation)
+* Atrial fibrillation coagulant treatment (with a corresponding diagnosis of atrial fibrillation)
 
 Stroke teams have been anonymised, and all stroke teams have 500 artificial patients generated.
 
@@ -80,4 +80,3 @@ A `environment.yml` file is provided in the `binder` folder. A summary of the pa
 * Scikit-Learn 1.3
 * SHAP 0.43
 * XGBoost 2.0
-
