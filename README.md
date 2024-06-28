@@ -76,6 +76,7 @@ A `envirnment.yml` file is provided in the `binder` folder. A summary of the pac
 * Matplotlib 3.8
 * NumPy 1.26
 * Pandas 2.1
+* Scikit-Learn 1.3
 * SHAP 0.43
 * XGBoost 2.0
 
