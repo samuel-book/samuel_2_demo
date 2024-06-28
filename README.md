@@ -50,10 +50,21 @@ These artificial patients are intended to demonstrate our machine learning model
 Stroke teams have been anonymised, and all stroke teams have 500 artificial patients generated.
 
 
-
 ## Data for pathway model
 
-The pathway sim data contains pathway summary information (mean and standard deviation) for 119 stroke teams. Admission numbers are set to 500/year for all teams. The team identity does not match the artificial patient data; both sets of data use arbitrary, and different, stroke team identification.
+The artificial_patient_pathway_data is generated in a similar way. For each stroke team individual the required data is sampled (with replacement, and rounding). Sampling on whether a patient receives thrombolysis or not is sampled from only those real patients who arrived within 4 hours of known onset, were scanned within 4 hrs 15 mins of known onset, and were ischaemic strokes. Again, these artificial patients are intended to demonstrate our simulation model, and are not suitable for any clinical research into stroke. Each artificial patient has the following features.
+
+* Arrive by ambulance (Y/N)
+* Age (5 year age bands)
+* Infarction (Y/N)
+* Onset known (Y/N)
+* Onset-to-arrival time (minutes, rounded to closest 5 mins)
+* Arrival-to-scan time (minutes, rounded to closest 5 mins)
+* Use of thrombolysis (Y/N)
+* Scan-to-thrombolysis time (minutes, if appropriate, rounded to closest 5 mins)
+
+Stroke teams have been anonymised (but are not calculated to align patients with the same stroke team name in the artificial machine learning patient data, as this is for demonstration purposes only), and all stroke teams have 500 artificial patients generated.
+
 
 ## Environment
 
