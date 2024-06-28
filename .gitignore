@@ -2,6 +2,7 @@
 data/
 temp/
 output/
+patient_output/
 pickled_models/
 
 # Ignore file types that may contain data or models
