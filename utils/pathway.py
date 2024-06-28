@@ -301,7 +301,7 @@ class Pathway:
         return results_df
     
 
-    def plot_summary_results(self):
+    def plot_summary_results(self, show=False):
 
         """Plot and save overall simulation results"""
 
@@ -350,6 +350,11 @@ class Pathway:
         plt.tight_layout(pad=2)
 
         plt.savefig('./output/sim_results_summary.jpg', dpi=300)
+        
+        # Show if required
+        if show:
+            plt.show()
+        
         plt.close()
 
     def run(self):
