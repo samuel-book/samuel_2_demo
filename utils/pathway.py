@@ -491,6 +491,9 @@ class Pathway:
         benchmark_adjustment = (hospital_performance['benchmark_decision'] / 
                                 hospital_performance['thrombolysis'])
         hospital_performance['eligable'] *= benchmark_adjustment
+        # Limit hospital_performance['eligable'] to 0.05 to 0.95 (may be required with demo data)
+        hospital_performance['eligable'] = np.clip(hospital_performance['eligable'], 0.05, 0.95)
+
         # Get results
         results = self.model_ssnap_pathway_scenarios(hospital_performance)
         results['scenario'] = 'benchmark'
@@ -543,6 +546,9 @@ class Pathway:
         benchmark_adjustment = (hospital_performance['benchmark_decision'] / 
                                 hospital_performance['thrombolysis'])
         hospital_performance['eligable'] *= benchmark_adjustment
+        # Limit hospital_performance['eligable'] to 0.05 to 0.95 (may be required with demo data)
+        hospital_performance['eligable'] = np.clip(hospital_performance['eligable'], 0.05, 0.95)
+
         # Get results
         results = self.model_ssnap_pathway_scenarios(hospital_performance)
         results['scenario'] = 'speed_benchmark'
@@ -571,6 +577,9 @@ class Pathway:
         benchmark_adjustment = (hospital_performance['benchmark_decision'] / 
                                 hospital_performance['thrombolysis'])
         hospital_performance['eligable'] *= benchmark_adjustment
+        # Limit hospital_performance['eligable'] to 0.05 to 0.95 (may be required with demo data)
+        hospital_performance['eligable'] = np.clip(hospital_performance['eligable'], 0.05, 0.95)
+
         # Get results
         results = self.model_ssnap_pathway_scenarios(hospital_performance)
         results['scenario'] = 'onset_benchmark'
@@ -598,12 +607,16 @@ class Pathway:
         benchmark_adjustment = (hospital_performance['benchmark_decision'] / 
                                 hospital_performance['thrombolysis'])
         hospital_performance['eligable'] *= benchmark_adjustment
+        # Limit hospital_performance['eligable'] to 0.05 to 0.95 (may be required with demo data)
+        hospital_performance['eligable'] = np.clip(hospital_performance['eligable'], 0.05, 0.95)
+
         # Speed
         hospital_performance['scan_within_4_hrs'] = 0.95
         hospital_performance['arrival_scan_arrival_mins_mu'] = np.log(15)
         hospital_performance['arrival_scan_arrival_mins_sigma'] = 0
         hospital_performance['scan_needle_mins_mu'] = np.log(15)
         hospital_performance['scan_needle_mins_sigma'] = 0
+        
         # Get results
         results = self.model_ssnap_pathway_scenarios(hospital_performance)
         results['scenario'] = 'speed_onset_benchmark'

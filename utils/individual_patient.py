@@ -304,7 +304,7 @@ class IndividualPatientModel:
         p_treated = pd.concat([p, one_hot], axis=1)
         p_treated.drop('stroke_team', axis=1, inplace=True)
         p_untreated = p_treated.copy()
-        p_untreated['onset_to_thrombolysis'] = -10
+        p_untreated['onset_to_thrombolysis'] = 99999
     
         for i in range(len(self.outcome_models)):        
         # Get untreated and treated distributions

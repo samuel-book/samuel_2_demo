@@ -258,8 +258,8 @@ class ThrombolysisChoiceOutcome():
         X_one_hot = pd.concat([X, one_hot_encoded_df], axis=1)
         X_one_hot.drop('stroke_team', axis=1, inplace=True)
 
-        # Test with all onset_to_thrombolysis set to -10 (no thrombolysis)
-        X_one_hot['onset_to_thrombolysis'] = -10
+        # Test with all onset_to_thrombolysis set to 99999 (no thrombolysis)
+        X_one_hot['onset_to_thrombolysis'] = 99999
         all_patients_outcomes_untreated = self.outcome_model.predict_proba(
             X_one_hot)
         all_patients_outcomes_untreated_weighted_mrs = \
