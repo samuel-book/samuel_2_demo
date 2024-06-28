@@ -151,6 +151,7 @@ class ThrombolysisChoiceOutcome():
         # Get accuracy
         fpr, tpr, thresholds = roc_curve(y, y_pred_proba)
         roc_auc = auc(fpr, tpr)
+        print('\nAccuracy scores are for guidance only; all data is used to fit model')
         print(f'ROC AUC: {roc_auc:0.3f}')
         print(f'Actual thrombolysis: {np.mean(y):0.3f}')
         print(f'Predicted thrombolysis: {np.mean(y_pred):0.3f}')
@@ -243,6 +244,7 @@ class ThrombolysisChoiceOutcome():
         y_probs = self.outcome_model.predict_proba(X_train_one_hot)
         auc = roc_auc_score(y_train.astype(np.int8), y_probs,
                             multi_class='ovo', average='macro')
+        print('\nAccuracy score is for guidance only; all data is used to fit model')
         print(f'Outcome multiclass ROC AUC {auc:.3f}')
 
         # Predict all patients with and without thrombolysis
