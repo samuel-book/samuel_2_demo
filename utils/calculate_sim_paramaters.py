@@ -17,14 +17,15 @@ class CalculateSimParameters:
 
     """
 
-    def __init__(self, limit_to_ambo=False):
+    def __init__(self, data_path, limit_to_ambo=False):
         """
         Creates the data load object
         """
 
+        self.data_path = data_path
 
         # Load full data
-        self.full_data = pd.read_csv('./data/artificial_patient_pathway_data.csv', low_memory=False)
+        self.full_data = pd.read_csv(f'{self.data_path}/patient_pathway_data.csv', low_memory=False)
 
         # Limit to ambulance arrivals if required
         if limit_to_ambo:

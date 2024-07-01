@@ -13,10 +13,12 @@ class IndividualPatientModel:
     Class for individual patient models (thrombolysis choice and outcome).
     """
 
-    def __init__(self, train_models=False, replicates=30):
+    def __init__(self, data_path, train_models=False, replicates=30):
         """
         Initialize the class.
         """
+
+        self.data_path = data_path
 
         self.thrombolysis_choice_fields = [
             'stroke_team',
@@ -43,8 +45,7 @@ class IndividualPatientModel:
             'discharge_disability'
         ]
 
-
-        self.data = pd.read_csv('./data/artificial_ml_data.csv', low_memory=False)    
+        self.data = pd.read_csv(f'{data_path}/ml_data.csv', low_memory=False)    
 
         # Set up one hot encoder
         self.stroke_teams = list(self.data['stroke_team'].unique())
