@@ -4,6 +4,7 @@ temp/
 output/
 patient_output/
 pickled_models/
+ssnap_data/
 
 # Ignore file types that may contain data or models
 *.p

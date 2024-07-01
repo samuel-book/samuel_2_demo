@@ -109,10 +109,6 @@ class ThrombolysisChoiceOutcome():
         self.data['simulated_onset_to_thrombolysis'] = (
             self.data['onset_to_arrival_time'] + self.data['arrival_to_scan_time'] + 20)
         
-        # Artificial data is based on patients who have not received thrombectomy
-        # For real data when training outcome model, remove patients who have received thrombectomy
-        self.data['thrombectomy'] = 0
-
         # Make copy of data for results
         self.patient_results = self.data.copy(deep=True)
 

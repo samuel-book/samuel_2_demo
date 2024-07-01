@@ -46,10 +46,6 @@ class IndividualPatientModel:
 
         self.data = pd.read_csv('./data/artificial_ml_data.csv', low_memory=False)    
 
-        # Artificial data is based on patients who have not received thrombectomy
-        # For real data when training outcome model, remove patients who have received thrombectomy
-        self.data['thrombectomy'] = 0    
- 
         # Set up one hot encoder
         self.stroke_teams = list(self.data['stroke_team'].unique())
         self.stroke_teams.sort()
