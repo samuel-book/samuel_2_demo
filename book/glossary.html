@@ -1,0 +1,658 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Glossary of technical terms &#8212; SAMueL-2 (Stroke Audit Machine Learning) - Predicting thrombolysis use and outcome after stroke</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b76e3c8a" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'book/glossary';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data" href="data.html" />
+    <link rel="prev" title="Placeholder" href="intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SAMueL-2 (Stroke Audit Machine Learning) - Predicting thrombolysis use and outcome after stroke</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Placeholder
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introductory content</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Glossary of technical terms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="odds_prob.html">Probability, odds, and SHAP values (log odds shifts)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shap_worked_example.html">A simple worked example of Shap</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/book/glossary.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Glossary of technical terms</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#anticoagulants">Anticoagulants</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#artificial-patients">Artificial patients</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#explainable-machine-learning">Explainable machine learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fast">FAST</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-boosting-decision-trees">Gradient boosting decision trees</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#haemorrhage">Haemorrhage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#infarction-and-ischaemic-stroke">Infarction and ischaemic stroke</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#machine-learning">Machine learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modified-rankin-scale-mrs">Modified Rankin Scale (MRS)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nihss">NIHSS</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-hot-encoding">One-hot encoding</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python">Python</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#receiver-operating-characteristic-roc-curve">Receiver operating characteristic (ROC) curve</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#r-squared">R-squared</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scan-ct-scan">Scan (CT scan)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensitivity-ans-specificity">Sensitivity ans specificity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shapley-values-and-shap">Shapley values and SHAP</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratified-k-fold-cross-validation">Stratified k-fold cross-validation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stroke">Stroke</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#threshold-for-a-two-class-classification-model">Threshold (for a two-class classification model)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thrombolysis">Thrombolysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#xgboost">XGBoost</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="glossary-of-technical-terms">
+<h1>Glossary of technical terms<a class="headerlink" href="#glossary-of-technical-terms" title="Link to this heading">#</a></h1>
+<section id="anticoagulants">
+<h2>Anticoagulants<a class="headerlink" href="#anticoagulants" title="Link to this heading">#</a></h2>
+<p>Anticoagulants are medicines that help prevent blood clots. They may be used to help prevent stroke that is caused by atrial fibrillation. Atrial fibrillation is a condition where the heart beats irregularly and can cause blood to pool in the heart. This can increase the risk of blood clots forming, which can lead to stroke. Anticoagulants are given to people with atrial fibrillation to help prevent these blood clots from forming. They work by interfering with the blood’s ability to clot, which can reduce the risk of stroke. Anticoagulants need to be carefully monitored to make sure they are working effectively and not causing any unwanted side effects.</p>
+<p>Thrombolysis is not usually given to patients on anticoagulants, though a doctor may to choose to use it in some patients, for example, if they have tested the blood’s ability to clot, which may be measured and reported as an INR (International Normalized Ratio).</p>
+</section>
+<section id="artificial-patients">
+<h2>Artificial patients<a class="headerlink" href="#artificial-patients" title="Link to this heading">#</a></h2>
+<p>Artificial patients are patients where we make up their characteristics. We might, for example, make up a patient as follows:</p>
+<ul class="simple">
+<li><p>Infarction (stroke caused by clot) = Yes</p></li>
+<li><p>Stroke severity (NIHSS) = 15</p></li>
+<li><p>Precise onset time known = Yes</p></li>
+<li><p>Disability (mRS) before stroke = 0</p></li>
+<li><p>Age = 72</p></li>
+<li><p>Onset-to-arrival = 60 minutes</p></li>
+<li><p>Arrival-to-scan = 15 minutes</p></li>
+<li><p>Use of anticoagulants for AF = No</p></li>
+<li><p>Onset during sleep = No</p></li>
+</ul>
+<p>This allows us to explore how changing any feature or features of the patient will change the likelihood that such a patient would receive thrombolysis in each hospital.</p>
+</section>
+<section id="explainable-machine-learning">
+<h2>Explainable machine learning<a class="headerlink" href="#explainable-machine-learning" title="Link to this heading">#</a></h2>
+<p>Explainable Machine Learning (XAI) is a field of research that aims to make machine learning models more transparent and interpretable to humans. In plain English, it’s about making sure that the decisions made by machine learning models are understandable and trustworthy to people.</p>
+<p>Traditional machine learning models often operate as black boxes, where it can be difficult to understand how the model arrived at its predictions or decisions. XAI aims to address this issue by providing a way to explain how a model makes decisions and what factors are contributing to those decisions.</p>
+</section>
+<section id="fast">
+<h2>FAST<a class="headerlink" href="#fast" title="Link to this heading">#</a></h2>
+<p>“FAST” is an acronym used to recognize the signs and symptoms of a stroke, and to prompt people to seek medical attention immediately. The acronym stands for:</p>
+<ol class="arabic simple">
+<li><p>Face drooping: If one side of the face droops or feels numb, it could be a sign of a stroke.</p></li>
+<li><p>Arm weakness: If one arm is weak or numb, it could be a sign of a stroke.</p></li>
+<li><p>Speech difficulty: If speech is slurred or difficult to understand, it could be a sign of a stroke.</p></li>
+<li><p>Time to call emergency services: If any of the above symptoms are present, it’s important to call emergency services (such as 911 in the United States) immediately.</p></li>
+</ol>
+<p>A “FAST” positive in stroke refers to the presence of one or more of these symptoms, which indicates a possibility of a stroke.</p>
+</section>
+<section id="gradient-boosting-decision-trees">
+<h2>Gradient boosting decision trees<a class="headerlink" href="#gradient-boosting-decision-trees" title="Link to this heading">#</a></h2>
+<p>Gradient boosting trees is a machine learning algorithm that combines multiple decision trees to make accurate predictions. In plain English, it’s a technique that allows a computer to learn from examples and make predictions about new data.</p>
+<p>The algorithm works by creating a series of decision trees, each one building on the previous tree’s predictions. At each step, the algorithm identifies the features that are most important for making accurate predictions and creates a new tree that corrects for the errors of the previous trees.</p>
+<p>To create the decision trees, the algorithm starts with a single tree that makes predictions based on a subset of the available features. It then calculates the error of the predictions and uses that information to build a second tree that corrects for the errors of the first tree. This process continues until a set number of trees have been created, or until the error rate is minimized.</p>
+<p>The final model is a combination of all the decision trees, with each tree contributing its own unique perspective on the data. The algorithm uses a technique called gradient descent to optimize the model, adjusting the parameters of the decision trees to minimize the error rate.</p>
+<p>Gradient boosting trees is a powerful machine learning algorithm that can be used for a wide range of applications, including image recognition, natural language processing, and predictive analytics. It’s particularly useful for problems where there are many variables and complex relationships between them, and where accurate predictions are critical.</p>
+<p>We use a type of gradient boosting decision tree model called XGBoost (eXtreme Gradient Boost).</p>
+</section>
+<section id="haemorrhage">
+<h2>Haemorrhage<a class="headerlink" href="#haemorrhage" title="Link to this heading">#</a></h2>
+<p>A haemorrhage is a bleed from a blood vessel within the body.</p>
+<p>2 out of 10 strokes are caused by a bleed in the brain. These patients must not be given thrombolysis (which is used to dissolve clots), otherwise the bleed is likely to be made much worse.</p>
+</section>
+<section id="infarction-and-ischaemic-stroke">
+<h2>Infarction and ischaemic stroke<a class="headerlink" href="#infarction-and-ischaemic-stroke" title="Link to this heading">#</a></h2>
+<p>An infarction is a blood clot that leads to loss of blood supply to an area of the body. In the case of stroke an infarction is a clot in a blood vessel in the brain that leads to loss of blood supply to the area of the brain fed by that blood vessel. In stroke, if the patient arrives in hospital in time they may be suitable for thrombolysis to dissolve the clot.</p>
+<p>A stroke caused by an infarction is also known as an ischaemic stroke, which is another way to describe a stroke caused by a blockage in a blood vessel.</p>
+<p>8 out of 10 strokes are cause by a clot.</p>
+</section>
+<section id="machine-learning">
+<h2>Machine learning<a class="headerlink" href="#machine-learning" title="Link to this heading">#</a></h2>
+<p>Machine learning is a type of artificial intelligence that involves teaching machines to learn from data, rather than being explicitly programmed to perform specific tasks. In plain English, machine learning is a way to teach computers how to make predictions or decisions based on patterns in data, similar to how humans learn from experience.</p>
+<p>The process of machine learning involves training a model using a large dataset, which contains examples of inputs and corresponding outputs. The model learns from these examples and makes predictions or decisions based on new input data. As the model is exposed to more data, it can refine its predictions or decisions, improving its accuracy and reliability.</p>
+</section>
+<section id="modified-rankin-scale-mrs">
+<h2>Modified Rankin Scale (MRS)<a class="headerlink" href="#modified-rankin-scale-mrs" title="Link to this heading">#</a></h2>
+<p>The Modified Rankin Scale (MRS) is a widely used clinical tool to measure the degree of disability or dependence in patients who have suffered a stroke or other neurological disorders.</p>
+<p>The MRS scores range from 0 to 6, with 0 indicating no symptoms and 6 indicating death. The scale includes six levels of disability, with each level reflecting a different degree of dependence:</p>
+<ol class="arabic simple" start="0">
+<li><p>No symptoms.</p></li>
+<li><p>No significant disability, able to carry out all usual duties and activities.</p></li>
+<li><p>Slight disability, able to look after oneself but unable to carry out all previous activities.</p></li>
+<li><p>Moderate disability, requires some help but able to walk unassisted.</p></li>
+<li><p>Moderately severe disability, unable to walk unassisted and requires constant care.</p></li>
+<li><p>Severe disability, bedridden and requires constant nursing care.</p></li>
+<li><p>Death.</p></li>
+</ol>
+<p>The MRS is commonly used in clinical practice, research studies, and clinical trials as a measure of functional outcome after stroke or other neurological disorders. It provides a simple and standardized way to assess the patient’s level of disability or dependence and can be used to track the patient’s progress over time.</p>
+<p>The MRS is a useful tool for healthcare professionals in making treatment decisions and for patients and their families in understanding the severity of the disability and the potential for recovery. It also helps to standardize the assessment of disability across different clinical settings and research studies.</p>
+</section>
+<section id="nihss">
+<h2>NIHSS<a class="headerlink" href="#nihss" title="Link to this heading">#</a></h2>
+<p>NIHSS stands for the National Institutes of Health Stroke Scale. It is a standardized tool used by healthcare professionals to assess and measure the severity of neurological deficits in patients who have suffered a stroke.</p>
+<p>The NIHSS includes 15 different assessments that evaluate different aspects of the patient’s neurological function, such as their level of consciousness, vision, movement, speech, and language abilities. Each assessment is scored on a scale of 0 to 4 or 0 to 3, depending on the assessment, with higher scores indicating more severe deficits.</p>
+<p>The total score on the NIHSS can range from 0 to 42, with higher scores indicating more severe stroke symptoms. The NIHSS is often used by healthcare professionals to determine the appropriate treatment plan for stroke patients, as well as to track the patient’s progress over time.</p>
+<p>The NIHSS is a widely recognized and accepted tool for evaluating stroke patients and is used in clinical practice, research studies, and clinical trials. It helps healthcare professionals to quickly and objectively assess the patient’s neurological function and provide appropriate treatment based on the severity of the stroke.</p>
+</section>
+<section id="one-hot-encoding">
+<h2>One-hot encoding<a class="headerlink" href="#one-hot-encoding" title="Link to this heading">#</a></h2>
+<p>One-hot encoding is a technique used in data processing and machine learning to convert categorical data into numerical data.</p>
+<p>Categorical data refers to data that represents different categories, such as color, shape, or size, and cannot be measured in numerical values. For example, the colors red, blue, and green are categories, but they cannot be measured in numerical values.</p>
+<p>One-hot encoding transforms each category into a binary vector (a list of numbers) of 0s and 1s. The length of the vector is equal to the number of categories, and each vector has a single 1 in the position corresponding to its category and 0s elsewhere.</p>
+<p>For example, let’s say we have a dataset of fruits that includes the categories apple, banana, and orange. In one-hot encoding, apple would be represented as [1, 0, 0], banana as [0, 1, 0], and orange as [0, 0, 1].</p>
+<p>This transformation allows machine learning algorithms to work with categorical data more easily by representing them as numerical values that can be used in mathematical calculations.</p>
+</section>
+<section id="python">
+<h2>Python<a class="headerlink" href="#python" title="Link to this heading">#</a></h2>
+<p>Python is a popular programming language that was created in the late 1980s by Guido van Rossum. It is designed to be easy to read and write, with a clear and simple syntax that emphasizes readability.</p>
+</section>
+<section id="receiver-operating-characteristic-roc-curve">
+<h2>Receiver operating characteristic (ROC) curve<a class="headerlink" href="#receiver-operating-characteristic-roc-curve" title="Link to this heading">#</a></h2>
+<p>A Receiver Operating Characteristic (ROC) curve is a graph that shows how well a machine learning model can distinguish between two classes. In plain English, it shows how well a model is able to distinguish between two classes by plotting the trade-off between sensitivity (the ability of the model to correctly identify positive cases) and specificity (the ability of the model to correctly identify negative cases).</p>
+<p>The ROC curve is created by plotting the true positive rate (TPR) against the false positive rate (FPR) at different classification thresholds. The TPR represents the proportion of positive cases that are correctly identified by the model, while the FPR represents the proportion of negative cases that are incorrectly classified as positive by the model.</p>
+<p>A perfect model would have a TPR of 1 and an FPR of 0, resulting in a point in the top left corner of the ROC curve. A random model, on the other hand, would have a diagonal line from the bottom left to the top right of the graph, indicating that the TPR and FPR are roughly equal.</p>
+<p>The area under the ROC curve (AUC) is often used as a summary statistic to compare the performance of different models. An AUC of 0.5 represents a random model, while an AUC of 1.0 represents a perfect model. In general, a higher AUC indicates better discrimination between the two classes.</p>
+</section>
+<section id="r-squared">
+<h2>R-squared<a class="headerlink" href="#r-squared" title="Link to this heading">#</a></h2>
+<p>R-squared, also known as the coefficient of determination, is a statistical measure that indicates how well a regression model fits the data. It is a number between 0 and 1, where 1 represents a perfect fit and 0 represents no relationship between the predictor variables and the response variable.</p>
+<p>In plain English, R-squared measures how much of the variation in the response variable can be explained by the predictor variables in the model. For example, if R-squared is 0.80, it means that 80% of the variability in the response variable can be explained by the predictor variables in the model, and the remaining 20% is unexplained and may be due to random variation or other factors not accounted for in the model.</p>
+<p>Another way to think of R-squared is as a measure of the goodness of fit of the model. A higher R-squared indicates that the model is better at predicting the response variable, while a lower R-squared indicates that the model is not a good fit for the data and may need to be revised or improved. However, it is important to note that a high R-squared does not necessarily mean that the model is a good predictor of future outcomes or that it is the best model for the data. Other factors, such as model complexity and overfitting, also need to be considered when evaluating a regression model.</p>
+</section>
+<section id="scan-ct-scan">
+<h2>Scan (CT scan)<a class="headerlink" href="#scan-ct-scan" title="Link to this heading">#</a></h2>
+<p>In emergency stroke treatment, a computed tomography (CT) scan is typically used as the first imaging test to quickly evaluate the brain and determine whether a person has had an ischemic or hemorrhagic stroke.</p>
+<p>A CT scan is a non-invasive imaging test that uses X-rays to create detailed images of the brain. It is a fast and widely available test that can help identify the type and location of the stroke, which is important in determining the best treatment approach.</p>
+<p>If the CT scan shows that the stroke is caused by a blood clot, the patient may be a candidate for treatment with a clot-busting medication called tissue plasminogen activator (tPA). In some cases, a magnetic resonance imaging (MRI) scan may also be used to provide additional information about the stroke and help guide treatment decisions.</p>
+</section>
+<section id="sensitivity-ans-specificity">
+<h2>Sensitivity ans specificity<a class="headerlink" href="#sensitivity-ans-specificity" title="Link to this heading">#</a></h2>
+<p>In machine learning, sensitivity and specificity are two important measures of the performance of a model that is classifying examples into two categories.</p>
+<p><em>Sensitivity</em> is a measure of how well a model can correctly identify <em>positive</em> instances, also known as true positives. It is the proportion of true positive results among all actual positive instances. In other words, sensitivity measures the ability of a model to correctly identify the instances that belong to a certain class. For example, in a medical diagnosis problem, sensitivity would measure the percentage of patients who truly have a certain disease that are correctly identified by the model. High sensitivity means that few people with a disease will be missed.</p>
+<p><em>Specificity</em> is a measure of how well a model can correctly identify <em>negative</em> instances, also known as true negatives. It is the proportion of true negative results among all actual negative instances. For example, in a medical diagnosis problem, specificity would measure the percentage of patients who do not have a certain disease that are correctly identified by the model. High specificity will mean that few patients who do not have a disease will be told that they may have that disease.</p>
+<p>In our case, <em>sensitivity</em> reports the proportion of patients who received thrombolysis that our model predicted would receive thrombolysis, <em>specificity</em> reports the proportion of patients who did not receive thrombolysis that our model predicted would not receive thrombolysis.</p>
+</section>
+<section id="shapley-values-and-shap">
+<h2>Shapley values and SHAP<a class="headerlink" href="#shapley-values-and-shap" title="Link to this heading">#</a></h2>
+<p>Shapley values are used to explain the contribution of each feature or variable to the prediction of a model. Shap values are therefore a type of Explainable Machine Learning (XAI).</p>
+<p>Essentially, the contribution of each feature or variable is measured by comparing the prediction with and without that feature or variable included. For example, if we have a model that predicts the price of a house based on several features such as the number of bedrooms, square footage, and location, we can use Shapley values to determine how much each feature contributes to the predicted price. By comparing the prediction with and without each feature included, we can calculate the Shapley value for each feature and determine which features have the most impact on the prediction.</p>
+<p>In practice Shapley values are a little more complicated to calculate as the method looks at many combinations of used and non-used features for each instance (rather than only leaving a sngle feature out at a time). This makes Shapley values quite hard and time-consuming to calculate. SHAP is a package that estimates Shapley Values efficiently.</p>
+</section>
+<section id="stratified-k-fold-cross-validation">
+<h2>Stratified k-fold cross-validation<a class="headerlink" href="#stratified-k-fold-cross-validation" title="Link to this heading">#</a></h2>
+<p>When dividing your dataset into a train and test set, how much of the result is due to that particular division of the instances between these two sets? Stratified k-fold cross-validation is a method to divide your data into training and test sets a number of times, such that each instance is in one, but only one, test set. By fitting a model to each of these train-test sets allows the model performance to be measured under different splits, and the results robustness can be determined by the consistency of the results.</p>
+</section>
+<section id="stroke">
+<h2>Stroke<a class="headerlink" href="#stroke" title="Link to this heading">#</a></h2>
+<p>A stroke, also known as a cerebrovascular accident (CVA), is a medical condition that occurs when blood flow to a part of the brain is interrupted or reduced, leading to brain cell damage or death. The interruption or reduction in blood flow can be caused by a blockage or rupture of a blood vessel in the brain.</p>
+<p>There are two main types of stroke: ischemic stroke and hemorrhagic stroke. Ischaemic stroke is the most common type and occurs when a blood clot blocks a blood vessel in the brain. Hemorrhagic stroke, on the other hand, occurs when a blood vessel in the brain ruptures or leaks.</p>
+<p>Symptoms of a stroke may include sudden weakness or numbness in the face, arm, or leg, especially on one side of the body; sudden confusion or trouble speaking or understanding speech; sudden vision problems in one or both eyes; sudden dizziness or loss of balance or coordination; and severe headache with no known cause.</p>
+<p>A stroke is a medical emergency, and rapid treatment is crucial to minimize brain damage and prevent long-term disability or death. Treatment may include medications to dissolve blood clots or control bleeding, surgery to repair ruptured blood vessels or remove blood clots, and rehabilitation to regain lost skills and functions.</p>
+</section>
+<section id="threshold-for-a-two-class-classification-model">
+<h2>Threshold (for a two-class classification model)<a class="headerlink" href="#threshold-for-a-two-class-classification-model" title="Link to this heading">#</a></h2>
+<p>Many machine learning models, such as XGBoost, return a probability of recieving thrombolysis, and we use a nominal threshold value to turn this probability into a prediction. By default, this is the midpoint, 0.5. A different threshold can be used. By choosing a lower threshold value (between 0.0-0.5) fewer instances will be classified as 0 (not recieve thrombolysis) and more will be classified as 1 (recieve thrombolysis). By doing so we will create more false alarms (false positives), but also classify more true positives. By choosing a higher threshold value (between 0.5-1.0) more instances will be classified as 0 (not recieve thrombolysis) and fewer will be classified as 1 (recieve thrombolysis). By doing so will create more undetected positives (false negatives), but also identify more true negatives. Choosing a threshold value is balancing these two cases.</p>
+</section>
+<section id="thrombolysis">
+<h2>Thrombolysis<a class="headerlink" href="#thrombolysis" title="Link to this heading">#</a></h2>
+<p>Thrombolysis in stroke is a medical treatment aimed at dissolving blood clots that block blood vessels in the brain, causing an ischemic stroke. The goal of thrombolysis is to restore blood flow to the affected area of the brain as quickly as possible to minimize brain damage and improve the chances of a good recovery.</p>
+<p>The treatment involves administering a medication called a thrombolytic agent, which is typically given through an IV line in the arm. The most commonly used thrombolytic agent is tissue plasminogen activator (tPA), which works by breaking down the blood clot and restoring blood flow to the brain.</p>
+<p>Thrombolysis is considered a time-critical treatment, and it is most effective when given within the first few hours after the onset of stroke symptoms. However, the treatment also carries some risks, such as bleeding in the brain, so it is not suitable for all patients. The decision to use thrombolysis must be made by a healthcare professional based on careful evaluation of the individual’s medical history, symptoms, and other factors.</p>
+</section>
+<section id="xgboost">
+<h2>XGBoost<a class="headerlink" href="#xgboost" title="Link to this heading">#</a></h2>
+<p>XGBoost stands for eXtreme Gradient Boost. It is a type of machine learning algorithm which uses many decision trees to arrive at a prediction for an instance. A decision tree is a way of making decisions based on a set of conditions or rules. Think of it like a game of 20 Questions, where you start with a broad question and keep asking more specific questions until you arrive at an answer.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./book"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Placeholder</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="data.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Data</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#anticoagulants">Anticoagulants</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#artificial-patients">Artificial patients</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#explainable-machine-learning">Explainable machine learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fast">FAST</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-boosting-decision-trees">Gradient boosting decision trees</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#haemorrhage">Haemorrhage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#infarction-and-ischaemic-stroke">Infarction and ischaemic stroke</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#machine-learning">Machine learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modified-rankin-scale-mrs">Modified Rankin Scale (MRS)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nihss">NIHSS</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-hot-encoding">One-hot encoding</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python">Python</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#receiver-operating-characteristic-roc-curve">Receiver operating characteristic (ROC) curve</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#r-squared">R-squared</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scan-ct-scan">Scan (CT scan)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensitivity-ans-specificity">Sensitivity ans specificity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shapley-values-and-shap">Shapley values and SHAP</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratified-k-fold-cross-validation">Stratified k-fold cross-validation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stroke">Stroke</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#threshold-for-a-two-class-classification-model">Threshold (for a two-class classification model)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thrombolysis">Thrombolysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#xgboost">XGBoost</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By SAMueL Project Team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

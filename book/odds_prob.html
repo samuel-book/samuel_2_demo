@@ -1,0 +1,716 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Probability, odds, and SHAP values (log odds shifts) &#8212; SAMueL-2 (Stroke Audit Machine Learning) - Predicting thrombolysis use and outcome after stroke</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b76e3c8a" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'book/odds_prob';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="A simple worked example of Shap" href="shap_worked_example.html" />
+    <link rel="prev" title="Data" href="data.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SAMueL-2 (Stroke Audit Machine Learning) - Predicting thrombolysis use and outcome after stroke</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Placeholder
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introductory content</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary of technical terms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Probability, odds, and SHAP values (log odds shifts)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shap_worked_example.html">A simple worked example of Shap</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/book/odds_prob.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Probability, odds, and SHAP values (log odds shifts)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability">Probability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#odds">Odds</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shap-values-log-odds-shifts">SHAP values: log odds shifts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#positive-shap-values-examples-of-how-shap-change-odds-and-probabilities">Positive SHAP values: examples of how SHAP change odds and probabilities</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#negative-shap-values-examples-of-how-shap-change-odds-and-probabilities">Negative SHAP values: examples of how SHAP change odds and probabilities</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-worked-example-in-predicting-use-of-thrombolysis-in-stroke">A worked example in predicting use of thrombolysis in stroke</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#observations-about-shap-values">Observations about SHAP values</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="probability-odds-and-shap-values-log-odds-shifts">
+<h1>Probability, odds, and SHAP values (log odds shifts)<a class="headerlink" href="#probability-odds-and-shap-values-log-odds-shifts" title="Link to this heading">#</a></h1>
+<p>Many of us find it easiest to think of the chance of something occurring as a probability. For example, there might be a probability of 10% that it will rain today. That is the same as saying there will be one rainy day out of ten days for days with this given probability of rain.</p>
+<p>In our stroke thrombolysis model, SHAP values tell us how knowing something particular about a patient (such as the patient <em>feature</em>, ‘Is their stroke caused by a clot or a bleed?’) adjusts our prediction of whether they will receive thrombolysis or not.</p>
+<p>This is made a little more complicated for us because SHAP is usually reported as a <em>log odds shift</em>. It is useful for us to see how those relate to probabilities, and get a sense of how significant SHAP values in the range of 0.5 to 5 (or -0.5 to -5) are, as that is a common range of SHAP values that we will see in our models.</p>
+<section id="probability">
+<h2>Probability<a class="headerlink" href="#probability" title="Link to this heading">#</a></h2>
+<p>We will take the example that SHAP reports that a model’s base probability prediction, before the contribution of features is 0.25, or a 25% probability of receiving thrombolysis; that is 1 in 4 patients with this prediction would be expected to receive thrombolysis.</p>
+</section>
+<section id="odds">
+<h2>Odds<a class="headerlink" href="#odds" title="Link to this heading">#</a></h2>
+<p><em>Probability</em> expresses the chance of something happening as the number of positive occurrences as a fraction of all occurrences (i.e. the number of patients receiving thrombolysis as a fraction of the total number of patients).</p>
+<p><em>Odds</em> express the chance of something happening as the ratio of the number of positive occurrences (i.e. receiving thrombolysis) to the number of negative occurrences (i.e. <em>not</em> receiving thrombolysis).</p>
+<p>If we have probability prediction of 0.25 would receive thrombolysis, that would mean 1 in 4 of those patients receive thrombolysis. Expressed as odds, for every one patient that receives thrombolysis, three will not. The odds are expressed as 1:3 or 1/3. This may also be calculated as a decimal (1 divided by 3), 0.333.</p>
+<p>Odds (O) and probability (P) may be converted with the following equations:</p>
+<p>(1) O = P / (1 - P)</p>
+<p>(2) P = O / (1 + O)</p>
+</section>
+<section id="shap-values-log-odds-shifts">
+<h2>SHAP values: log odds shifts<a class="headerlink" href="#shap-values-log-odds-shifts" title="Link to this heading">#</a></h2>
+<p>Here we will calculate the effect of SHAP values, and try and build some intuition on the size of effect SHAP values of 0.5 to 5 give (we will look at positive and negative SHAP values).</p>
+<p>SHAP usually outputs the effect of a particular feature in how much it shifts the odds. For reasons we will not go into here, that shift (which is the ‘SHAP value’) is usually given in ‘log odds’ (the logarithm of the odds value). For the mathematically inclined, we use the natural log (<em>ln</em>).</p>
+<p>Let’s look at some SHAP values (log odds) and see how much they change the odds of receiving thrombolysis.</p>
+<p>First we’ll look at the shift in odds the SHAP values give. This is calculated as <em>shift = exp(SHAP)</em></p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>SHAP (log odds)</p></th>
+<th class="head"><p>Shift in odds (multiply original odds)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0.5</p></td>
+<td><p>1.65</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>2.72</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>7.39</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>20.1</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>54.6</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>148</p></td>
+</tr>
+</tbody>
+</table>
+<section id="positive-shap-values-examples-of-how-shap-change-odds-and-probabilities">
+<h3>Positive SHAP values: examples of how SHAP change odds and probabilities<a class="headerlink" href="#positive-shap-values-examples-of-how-shap-change-odds-and-probabilities" title="Link to this heading">#</a></h3>
+<p>Now let us work through an example of starting with a known baseline <em>probability</em> (before we consider what we know about a particular patient feature), converting that to <em>odds</em>, applying a SHAP <em>log odds shift</em> for that particular feature, and converting back to <em>probability</em> after we have applied the influence of that feature.</p>
+<p>Here are the effects of those shifts on our baseline probability of 0.25.</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Starting P</p></th>
+<th class="head"><p>Starting O<br>(P / (1 - P))</p></th>
+<th class="head"><p>SHAP</p></th>
+<th class="head"><p>Shift in odds<br>(exp(SHAP))</p></th>
+<th class="head"><p>Shifted O<br>(O * Shift)</p></th>
+<th class="head"><p>Shifted P (%)<br>(O / (1 + O))</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0.25 (25%)</p></td>
+<td><p>0.333</p></td>
+<td><p>0.5</p></td>
+<td><p>1.65</p></td>
+<td><p>0.550</p></td>
+<td><p>0.3547 (35.5%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.25 (25%)</p></td>
+<td><p>0.333</p></td>
+<td><p>1</p></td>
+<td><p>2.72</p></td>
+<td><p>0.907</p></td>
+<td><p>0.4754 (47.5%)</p></td>
+</tr>
+<tr class="row-even"><td><p>0.25 (25%)</p></td>
+<td><p>0.333</p></td>
+<td><p>2</p></td>
+<td><p>7.39</p></td>
+<td><p>2.46</p></td>
+<td><p>0.7112 (71.1%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.25 (25%)</p></td>
+<td><p>0.333</p></td>
+<td><p>3</p></td>
+<td><p>20.1</p></td>
+<td><p>6.70</p></td>
+<td><p>0.8700 (87.0%)</p></td>
+</tr>
+<tr class="row-even"><td><p>0.25 (25%)</p></td>
+<td><p>0.333</p></td>
+<td><p>4</p></td>
+<td><p>54.6</p></td>
+<td><p>18.2</p></td>
+<td><p>0.9479 (94.8%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.25 (25%)</p></td>
+<td><p>0.333</p></td>
+<td><p>5</p></td>
+<td><p>148</p></td>
+<td><p>49.5</p></td>
+<td><p>0.9802 (98.0%)</p></td>
+</tr>
+</tbody>
+</table>
+<p>So, for example, a SHAP value of 0.5 for one particular feature tells us that that particular feature in that patient shifts our expected probability of that patient receiving thrombolysis from 25% to 36%. A SHAP value of 5 for the same feature would shift the probability of that patient receiving thrombolysis up to 98%.</p>
+</section>
+<section id="negative-shap-values-examples-of-how-shap-change-odds-and-probabilities">
+<h3>Negative SHAP values: examples of how SHAP change odds and probabilities<a class="headerlink" href="#negative-shap-values-examples-of-how-shap-change-odds-and-probabilities" title="Link to this heading">#</a></h3>
+<p>If we have a negative SHAP value then odds are reduced (a SHAP of -1 will lead to the odds being divided by 2.72, which is the same as multiplying by 1/2.72, which is 0.3679):</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Starting P</p></th>
+<th class="head"><p>Starting O<br>(P / (1 - P))</p></th>
+<th class="head"><p>SHAP</p></th>
+<th class="head"><p>Shift in odds<br>(exp(SHAP))</p></th>
+<th class="head"><p>Shifted O<br>(O * Shift)</p></th>
+<th class="head"><p>Shifted P (%)<br>(O / (1 + O))</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0.25 (25%)</p></td>
+<td><p>0.333</p></td>
+<td><p>-0.5</p></td>
+<td><p>0.6065</p></td>
+<td><p>0.2022</p></td>
+<td><p>0.1682 (16.8%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.25 (25%)</p></td>
+<td><p>0.333</p></td>
+<td><p>-1</p></td>
+<td><p>0.3679</p></td>
+<td><p>0.1226</p></td>
+<td><p>0.1092 (10.9%)</p></td>
+</tr>
+<tr class="row-even"><td><p>0.25 (25%)</p></td>
+<td><p>0.333</p></td>
+<td><p>-2</p></td>
+<td><p>0.1353</p></td>
+<td><p>0.0451</p></td>
+<td><p>0.0432 (4.32%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.25 (25%)</p></td>
+<td><p>0.333</p></td>
+<td><p>-3</p></td>
+<td><p>0.0498</p></td>
+<td><p>0.0166</p></td>
+<td><p>0.0163 (1.63%)</p></td>
+</tr>
+<tr class="row-even"><td><p>0.25 (25%)</p></td>
+<td><p>0.333</p></td>
+<td><p>-4</p></td>
+<td><p>0.0183</p></td>
+<td><p>0.0061</p></td>
+<td><p>0.0061 (0.61%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.25 (25%)</p></td>
+<td><p>0.333</p></td>
+<td><p>-5</p></td>
+<td><p>0.0067</p></td>
+<td><p>0.0022</p></td>
+<td><p>0.0022 (0.22%)</p></td>
+</tr>
+</tbody>
+</table>
+<p>So, for example, a SHAP value of -0.5 for one particular feature tells us that that particular feature in that patient shifts our expected probability of that patient receiving thrombolysis from 25% to 17%. A SHAP value of 5 for the same feature would shift the probability of that patient receiving thrombolysis down to 2%.</p>
+</section>
+</section>
+<section id="a-worked-example-in-predicting-use-of-thrombolysis-in-stroke">
+<h2>A worked example in predicting use of thrombolysis in stroke<a class="headerlink" href="#a-worked-example-in-predicting-use-of-thrombolysis-in-stroke" title="Link to this heading">#</a></h2>
+<p>The example below shows how six patient features change the model prediction of a patient receiving thrombolysis, from a baseline of 25% (with nothing known about the patient) to 95% after the contribution of six features. The relative contribution of each feature is made clear by its SHAP value. SHAP are additive in their effects; for example if one feature has a SHAP of +1.5, the influence of that feature on the model prediction would be exactly cancelled out by three other features with SHAP values of -0.5.</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Patient feature and value</p></th>
+<th class="head"><p>SHAP</p></th>
+<th class="head"><p>Shift<br>(exp(SHAP))</p></th>
+<th class="head"><p>Odds<br>(Previous odds * Shift)</p></th>
+<th class="head"><p>Probability<br>(O / (1 + O)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Base odds</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+<td><p>0.33</p></td>
+<td><p>25%</p></td>
+</tr>
+<tr class="row-odd"><td><p>Stroke type = infarction</p></td>
+<td><p>1.8</p></td>
+<td><p>6.05</p></td>
+<td><p>2</p></td>
+<td><p>67%</p></td>
+</tr>
+<tr class="row-even"><td><p>Stroke severity (NIHSS) = 20</p></td>
+<td><p>1.5</p></td>
+<td><p>4.482</p></td>
+<td><p>8.95</p></td>
+<td><p>90%</p></td>
+</tr>
+<tr class="row-odd"><td><p>Prior disability (mRS) = 3</p></td>
+<td><p>-0.7</p></td>
+<td><p>0.497</p></td>
+<td><p>4.44</p></td>
+<td><p>82%</p></td>
+</tr>
+<tr class="row-even"><td><p>Precise onset time = Yes</p></td>
+<td><p>0.6</p></td>
+<td><p>1.822</p></td>
+<td><p>8.1</p></td>
+<td><p>89%</p></td>
+</tr>
+<tr class="row-odd"><td><p>Arrival-to-scan time (mins) = 30</p></td>
+<td><p>0.5</p></td>
+<td><p>1.649</p></td>
+<td><p>13.35</p></td>
+<td><p>93%</p></td>
+</tr>
+<tr class="row-even"><td><p>Use of AF anticoagulants = No</p></td>
+<td><p>0.3</p></td>
+<td><p>1.35</p></td>
+<td><p>18.02</p></td>
+<td><p>95%</p></td>
+</tr>
+</tbody>
+</table>
+<section id="observations-about-shap-values">
+<h3>Observations about SHAP values<a class="headerlink" href="#observations-about-shap-values" title="Link to this heading">#</a></h3>
+<p>We begin to get some intuition on SHAP values. A SHAP value of 0.5 (or -0.5) leads to a small, but still noticeable, change in probability. SHAP values of 5 or -5 have effectively pushed probabilities to one extreme or the other.</p>
+<p>Everything we know about a patient (the patient ‘features’) may shift the predicted probability of receiving thrombolysis. Each patient feature will have its own SHAP value depending on the value of that feature. <em>Stroke severity</em>, for example, may be in the range 0-42, and the SHAP value will depend on the value of the feature. The final predicted probability of receiving thrombolysis will be the model baseline prediction (the predicted probability of receiving thrombolysis before anything is known about a patient) and the sum of the influences of each of the features.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./book"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="data.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Data</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="shap_worked_example.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">A simple worked example of Shap</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability">Probability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#odds">Odds</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shap-values-log-odds-shifts">SHAP values: log odds shifts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#positive-shap-values-examples-of-how-shap-change-odds-and-probabilities">Positive SHAP values: examples of how SHAP change odds and probabilities</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#negative-shap-values-examples-of-how-shap-change-odds-and-probabilities">Negative SHAP values: examples of how SHAP change odds and probabilities</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-worked-example-in-predicting-use-of-thrombolysis-in-stroke">A worked example in predicting use of thrombolysis in stroke</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#observations-about-shap-values">Observations about SHAP values</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By SAMueL Project Team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

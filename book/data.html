@@ -1,0 +1,598 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Data &#8212; SAMueL-2 (Stroke Audit Machine Learning) - Predicting thrombolysis use and outcome after stroke</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b76e3c8a" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'book/data';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Probability, odds, and SHAP values (log odds shifts)" href="odds_prob.html" />
+    <link rel="prev" title="Glossary of technical terms" href="glossary.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SAMueL-2 (Stroke Audit Machine Learning) - Predicting thrombolysis use and outcome after stroke</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Placeholder
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introductory content</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary of technical terms</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="odds_prob.html">Probability, odds, and SHAP values (log odds shifts)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shap_worked_example.html">A simple worked example of Shap</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/book/data.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Data</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-access">Data access</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-fields">Data Fields</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stroke-team">Stroke Team</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-general">Patient – general</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-pathway-information">Patient – pathway information</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-comorbidities">Patient – comorbidities</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-nih-stroke-scale">Patient – NIH Stroke Scale</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-other-clinical-features">Patient – other clinical features</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-thrombolysis-given">Patient – thrombolysis given</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-reason-stated-for-not-giving-thrombolysis">Patient – reason stated for not giving thrombolysis</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="data">
+<h1>Data<a class="headerlink" href="#data" title="Link to this heading">#</a></h1>
+<section id="data-access">
+<h2>Data access<a class="headerlink" href="#data-access" title="Link to this heading">#</a></h2>
+<p>Data was obtained from the Sentinel Stroke National Audit (SSNAP [1]), managed through the Healthcare Quality Improvement Partnership (HQIP [2]). SSNAP has near-complete coverage of all acute stroke admissions in the UK (outside Scotland). All hospitals admitting acute stroke participate in the audit, and year-on-year comparison with Hospital Episode Statistics [3] confirms estimated case ascertainment of 95% of coded cases of acute stroke.</p>
+<p>The NHS Health Research Authority decision tool [4] was used to confirm that ethical approval was not required to access the data. Data access was authorised by HQIP (reference HQIP303).</p>
+<p>Data was retrieved for 246,676 emergency stroke admissions to acute stroke teams in England and Wales between 2016 and 2018 (three full years).</p>
+<p>[1] https://www.strokeaudit.org/</p>
+<p>[2] https://www.hqip.org.uk/</p>
+<p>[3] https://digital.nhs.uk/data-and-information/data-tools-and-services/data-services/hospital-episode-statistics</p>
+<p>[4] http://www.hra-decisiontools.org.uk/research/</p>
+</section>
+<section id="data-fields">
+<h2>Data Fields<a class="headerlink" href="#data-fields" title="Link to this heading">#</a></h2>
+<section id="stroke-team">
+<h3>Stroke Team<a class="headerlink" href="#stroke-team" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>StrokeTeam: Pseudonymised SSNAP ‘routinely admitting team‘ unique identifier. For emergency care it is expected that each hospital has one stroke team (though post-72 hour care may be reported under a different team at that hospital).PatientUID: Pseudonymised patient unique identifier</p></li>
+</ul>
+</section>
+<section id="patient-general">
+<h3>Patient – general<a class="headerlink" href="#patient-general" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Pathway: Total number of team transfers, excluding community teams</p></li>
+<li><p>S1AgeOnArrival: Age on arrival aggregated to 5 year bands</p></li>
+<li><p>MoreEqual80y: Whether the patient is &gt;= 80 years old at the moment of the stroke</p></li>
+<li><p>S1Gender: Gender</p></li>
+<li><p>S1Ethnicity: Patient Ethnicity. Aggregated to White, Black, Mixed, Asian and Other</p></li>
+</ul>
+</section>
+<section id="patient-pathway-information">
+<h3>Patient – pathway information<a class="headerlink" href="#patient-pathway-information" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>S1OnsetInHospital: Whether the patient was already an inpatient at the time of stroke</p></li>
+<li><p>S1OnsetToArrival_min: Time from symptom onset to arrival at hospital in minutes, where known and if out of hospital stroke</p></li>
+<li><p>S1OnsetDateType: Whether the date of onset given is precise, best estimate or if the stroke occurred while sleep</p></li>
+<li><p>S1OnsetTimeType: Whether the time of symptom onset given is precise, best estimate, not known</p></li>
+<li><p>S1ArriveByAmbulance: Whether the patient arrived by ambulance</p></li>
+<li><p>S1AdmissionHour: Hour of arrival, aggregates to 3 hour epochs</p></li>
+<li><p>S1AdmissionDay: Day of week at the moment of admission</p></li>
+<li><p>S1AdmissionQuarter: Year quarter (Q1: Jan-Mar; Q2:April-Jun; Q3: Jul-Sept; Q4: Oct-Dec)</p></li>
+<li><p>S1AdmissionYear: Year of admission</p></li>
+<li><p>S2BrainImagingTime_min: Time from Clock Start to brain scan. In minutes. “Clock Start” is used throughout SSNAP reporting to refer to the date and time of arrival at first hospital for newly arrived patients, or to the date and time of symptom onset if patient already in hospital at the time of their stroke.</p></li>
+<li><p>S2ThrombolysisTime_min: Time from Clock Start to thrombolysis. In minutes. “Clock Start” is used throughout SSNAP reporting to refer to the date and time of arrival at first hospital for newly arrived patients, or to the date and time of symptom onset if patient already in hospital at the time of their stroke.</p></li>
+</ul>
+</section>
+<section id="patient-comorbidities">
+<h3>Patient – comorbidities<a class="headerlink" href="#patient-comorbidities" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>CongestiveHeartFailure: Pre-Stroke Congestive Heart Failure</p></li>
+<li><p>Hypertension: Pre-Stroke Systemic Hypertension</p></li>
+<li><p>AtrialFibrillation: Pre-Stroke Atrial Fibrillation (persistent, permanent, or paroxysmal)</p></li>
+<li><p>Diabetes: Comorbidities: Pre-Stroke Diabetes Mellitus</p></li>
+<li><p>StrokeTIA: Pre-Stroke history of stroke or Transient Ischaemic Attack (TIA)</p></li>
+<li><p>AFAntiplatelet: Only available if “Yes” to Atrial Fibrillation comorbidity. Whether the patient was on antiplatelet medication prior to admission</p></li>
+<li><p>AFAnticoagulent: Prior to 01-Dec-2017: Only available if “Yes” to Atrial Fibrillation comorbidity; From 01-Dec-2017: available even if patient is not in Atrial Fibrillation prior to admission. Whether the patient was on anticoagulant medication prior to admission</p></li>
+<li><p>AFAnticoagulentVitK: If the patient was receiving anticoagulant medication, was it vitamin K antagonists</p></li>
+<li><p>AFAnticoagulentDOAC: If the patient was receiving anticoagulant medication, was it direct oral anticoagulants (DOACs)</p></li>
+<li><p>AFAnticoagulentHeparin: If the patient was receiving anticoagulant medication, was it Heparin</p></li>
+</ul>
+</section>
+<section id="patient-nih-stroke-scale">
+<h3>Patient – NIH Stroke Scale<a class="headerlink" href="#patient-nih-stroke-scale" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>S2NihssArrival: National Institutes of Health Stroke Scale score on arrival at hospital</p></li>
+<li><p>BestGaze: National Institutes of Health Stroke Scale Item 2 Best Gaze (higher values indicate more severe deficit)</p></li>
+<li><p>BestLanguage: National Institutes of Health Stroke Scale Item 9 Best Language (higher values indicate more severe deficit)</p></li>
+<li><p>Dysarthria: National Institutes of Health Stroke Scale Item 10 Dysarthria (higher values indicate more severe deficit)</p></li>
+<li><p>ExtinctionInattention: National Institutes of Health Stroke Scale Item 11 Extinction and Inattention (higher values indicate more severe deficit)</p></li>
+<li><p>FacialPalsy: National Institutes of Health Stroke Scale Item 4 Facial Paresis (higher values indicate more severe deficit)</p></li>
+<li><p>LimbAtaxia: National Institutes of Health Stroke Scale Item 7 Limb Ataxia (higher values indicate more severe deficit)</p></li>
+<li><p>Loc: National Institutes of Health Stroke Scale Item 1a Level of Consciousness (higher values indicate more severe deficit)</p></li>
+<li><p>LocCommands: National Institutes of Health Stroke Scale Item 1c Level of Consciousness Commands (higher values indicate more severe deficit)</p></li>
+<li><p>LocQuestions: National Institutes of Health Stroke Scale Item 1b Level of Consciousness Questions (higher values indicate more severe deficit)</p></li>
+<li><p>MotorArmLeft: National Institutes of Health Stroke Scale Item 5a Motor Arm - Left (higher values indicate more severe deficit)</p></li>
+<li><p>MotorArmRight: National Institutes of Health Stroke Scale Item 5b Motor Arm - Right (higher values indicate more severe deficit)</p></li>
+<li><p>MotorLegLeft: National Institutes of Health Stroke Scale Item 6a Motor Leg - Left (higher values indicate more severe deficit)</p></li>
+<li><p>MotorLegRight: National Institutes of Health Stroke Scale Item 6b Motor Leg - Right (higher values indicate more severe deficit)</p></li>
+<li><p>Sensory: National Institutes of Health Stroke Scale Item 8 Sensory (higher values indicate more severe deficit)</p></li>
+<li><p>Visual: National Institutes of Health Stroke Scale Item 3 Visual Fields (higher values indicate more severe deficit)</p></li>
+</ul>
+</section>
+<section id="patient-other-clinical-features">
+<h3>Patient – other clinical features<a class="headerlink" href="#patient-other-clinical-features" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>S2INR: Patient’s International Normalised ratio (INR) on arrival at hospital (available since 01-Dec-2017)</p></li>
+<li><p>S2INRHigh: INR was greater than 10 on arrival at hospital (available since 01-Dec-2017)</p></li>
+<li><p>S2INRNK: INR not checked (available since 01-Dec-2017)</p></li>
+<li><p>S2NewAFDiagnosis: Whether a new diagnosis of Atrial Fibrillation was made on admission</p></li>
+<li><p>S2RankinBeforeStroke: Patient’s modified Rankin Scale score before this stroke (Higher values indicate more disability)</p></li>
+<li><p>S2StrokeType: Whether the stroke type was infarction or primary intracerebral haemorrhage</p></li>
+<li><p>S2TIAInLastMonth: Whether the patient had a Transient Ischaemic Attack during the last month. Item from the SSNAP comprehensive dataset questions (not mandatory)</p></li>
+</ul>
+</section>
+<section id="patient-thrombolysis-given">
+<h3>Patient – thrombolysis given<a class="headerlink" href="#patient-thrombolysis-given" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>S2Thrombolysis: Whether the patient was given thrombolysis (clot busting medication)</p></li>
+</ul>
+</section>
+<section id="patient-reason-stated-for-not-giving-thrombolysis">
+<h3>Patient – reason stated for not giving thrombolysis<a class="headerlink" href="#patient-reason-stated-for-not-giving-thrombolysis" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Age: If the answer to thrombolysis given was “no but”, the reason was Age</p></li>
+<li><p>Comorbidity: If the answer to thrombolysis given was “no but”, the reason was Co-morbidity</p></li>
+<li><p>Haemorrhagic: If the answer to thrombolysis given was “no but”, the reason was Haemorrhagic stroke</p></li>
+<li><p>Improving: If the answer to thrombolysis given was “no but”, the reason was Symptoms Improving</p></li>
+<li><p>Medication: If the answer to thrombolysis given was “no but”, the reason was Medication</p></li>
+<li><p>OtherMedical: If the answer to thrombolysis given was “no but”, the reason was Other medical reason</p></li>
+<li><p>Refusal: If the answer to thrombolysis given was “no but”, the reason was Refusal</p></li>
+<li><p>TimeUnknownWakeUp: If the answer to thrombolysis given was “no but”, the reason was Symptom onset time unknown/wake-up stroke</p></li>
+<li><p>TimeWindow: If the answer to thrombolysis given was “no but”, the reason was Age</p></li>
+<li><p>TooMildSevere: If the answer to thrombolysis given was “no but”, the reason was Stroke too mild or too severe</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./book"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="glossary.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Glossary of technical terms</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="odds_prob.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Probability, odds, and SHAP values (log odds shifts)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-access">Data access</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-fields">Data Fields</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stroke-team">Stroke Team</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-general">Patient – general</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-pathway-information">Patient – pathway information</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-comorbidities">Patient – comorbidities</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-nih-stroke-scale">Patient – NIH Stroke Scale</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-other-clinical-features">Patient – other clinical features</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-thrombolysis-given">Patient – thrombolysis given</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patient-reason-stated-for-not-giving-thrombolysis">Patient – reason stated for not giving thrombolysis</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By SAMueL Project Team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
