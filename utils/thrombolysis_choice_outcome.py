@@ -12,8 +12,10 @@ from xgboost import XGBClassifier
 
 class ThrombolysisChoiceOutcome():
 
-    def __init__(self, rerun_models=True):
+    def __init__(self, data_path, rerun_models=True):
         """Constructor."""
+
+        self.data_path = data_path
 
         # Define fileds to use in models
         self.thrombolysis_choice_X_fields = [
@@ -102,17 +104,13 @@ class ThrombolysisChoiceOutcome():
 
         # Load patient data (4 hour arrivals)
         self.data = pd.read_csv(
-            './data/artificial_ml_data.csv', low_memory=False)
+            f'{self.data_path}/ml_data.csv', low_memory=False)
 
         # Add 20 mins simulated scan to thrombolysis time for all patients
         # To predict benefit opr not of thrombolysis if given 20 mins from scan
         self.data['simulated_onset_to_thrombolysis'] = (
             self.data['onset_to_arrival_time'] + self.data['arrival_to_scan_time'] + 20)
         
-        # Artificial data is based on patients who have not received thrombectomy
-        # For real data when training outcome model, remove patients who have received thrombectomy
-        self.data['thrombectomy'] = 0
-
         # Make copy of data for results
         self.patient_results = self.data.copy(deep=True)
 

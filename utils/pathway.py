@@ -9,9 +9,12 @@ class Pathway:
     """
     Stroke pathway simulation
     """
-    def __init__(self, trials=30):
+    def __init__(self, data_path, trials=30):
+
+        self.data_path = data_path
+        
         # Load base case data
-        self.hospital_performance_original = pd.read_csv('./data/data_for_sim.csv')
+        self.hospital_performance_original = pd.read_csv(f'{data_path}/data_for_sim.csv')
 
         # Set number of trials
         self.trials = trials
