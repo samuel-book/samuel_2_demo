@@ -1,10 +1,12 @@
-# Folders to ignore
+build/
 data/
-temp/
+# Folders to ignore
 output/
+paper/
 patient_output/
 pickled_models/
 real_data/
+temp/
 
 # Ignore file types that may contain data or models
 *.p
