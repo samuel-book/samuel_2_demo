@@ -1,0 +1,9 @@
+format: jb-book
+root: book/intro
+parts:
+- caption: Introductory content
+  chapters:
+  - file: book/glossary
+  - file: book/data
+  - file: book/odds_prob
+  - file: book/shap_worked_example
