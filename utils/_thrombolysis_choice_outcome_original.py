@@ -17,7 +17,7 @@ class ThrombolysisChoiceOutcome():
 
         self.data_path = data_path
 
-        # Define fields to use in models
+        # Define fileds to use in models
         self.thrombolysis_choice_X_fields = [
             'stroke_team',
             'onset_to_arrival_time',
@@ -118,66 +118,7 @@ class ThrombolysisChoiceOutcome():
         self.stroke_teams = list(self.data['stroke_team'].unique())
         self.stroke_teams.sort()
 
-        # Load prototype patient data
-        self.prototype_patients = pd.read_csv(
-            f'{self.data_path}/prototype_patients.csv', index_col='Patient prototype')
-
-
-    def predict_prototype_patients(self, stroke_team, show=False):
-
-        prototype_patients = self.prototype_patients.copy(deep=True)
-        prototype_patients['stroke_team'] = stroke_team
-        # One hot encode stroke teams using OneHotEncoder with self.stroke_teams as categories
-        encoder = OneHotEncoder(categories=[self.stroke_teams], sparse=False)
-        encoder.fit(prototype_patients[['stroke_team']])
-        one_hot_encoded = encoder.transform(prototype_patients[['stroke_team']])
-        one_hot_encoded_df = pd.DataFrame(
-            one_hot_encoded, columns=self.stroke_teams, index=prototype_patients.index)
-        X_one_hot = pd.concat([prototype_patients, one_hot_encoded_df], axis=1)
-        X_one_hot.drop('stroke_team', axis=1, inplace=True)
-        # Get predictions from self.choice_model
-        y_pred_proba = self.choice_model.predict_proba(X_one_hot)[:, 1]
-        # Get benchmark predictions
-        decisions = []
-        for benchmark_hosp in self.benchmark_hospitals:
-            X_copy = prototype_patients.copy(deep=True)
-            X_copy['stroke_team'] = benchmark_hosp
-            one_hot_encoded = encoder.transform(X_copy[['stroke_team']])
-            one_hot_encoded_df = pd.DataFrame(
-                one_hot_encoded, columns=self.stroke_teams, index=X_copy.index)
-            X_one_hot_copy = pd.concat([X_copy, one_hot_encoded_df], axis=1)
-            X_one_hot_copy.drop('stroke_team', axis=1, inplace=True)
-            decisions.append(self.choice_model.predict_proba(X_one_hot_copy)[:, 1])
-        # Get majority vote
-        decisions = np.array(decisions)
-        benchmark = decisions.mean(axis=0)
-
-        # Put results in DataFrame
-        benchmark_results = pd.DataFrame()
-        benchmark_results['Benchmark'] = benchmark * 100
-        benchmark_results[f'{stroke_team}'] = y_pred_proba * 100
-
-        # Plot as vertical bar chart
-        labels = [i.replace('+', '+\n') for i in list(self.prototype_patients.index)]
-        fig = plt.figure(figsize=(15, 7))
-        ax = fig.add_subplot(111)
-        benchmark_results.plot.bar(ax=ax)
-        ax.set_ylim(0,100)
-        ax.set_ylabel('% Patients likely to receive thrombolysis(%)')
-        # rebuild the xticklabels
-        ax.set_xticklabels(labels, rotation=90)
-        ax.set_title(f'Percentage of patients likely to receive thrombolysis\n({stroke_team})')
-        ax.grid(axis = 'y')
-
-        if show:
-            plt.show()
-
-        # Save
-        plt.savefig(f'./output/prototype_patients{stroke_team}.png')
-
-        plt.close()
-
-
+        
     def run_choice_model(self):
         """Train the model to predict thrombolysis choice."""
 
@@ -253,9 +194,9 @@ class ThrombolysisChoiceOutcome():
 
         # ************ Get benchmark decisions ************
         mask = hospital_mean_shap['benchmark'] == 1
-        self.benchmark_hospitals = list(hospital_mean_shap[mask].index)
+        benchmark_hospitals = list(hospital_mean_shap[mask].index)
         decisions = []
-        for benchmark_hosp in self.benchmark_hospitals:
+        for benchmark_hosp in benchmark_hospitals:
             X_copy = X.copy(deep=True)
             X_copy['stroke_team'] = benchmark_hosp
             one_hot_encoded = encoder.transform(X_copy[['stroke_team']])
@@ -266,7 +207,7 @@ class ThrombolysisChoiceOutcome():
             decisions.append(self.choice_model.predict(X_one_hot_copy))
         # Get majority vote
         decisions = np.array(decisions)
-        benchmark = decisions.mean(axis=0)
+        benchmark = decisions.mean(axis=0) >= 0.5
         benchmark = benchmark * 1
         self.patient_results['benchmark_decision'] = benchmark
         # Save
