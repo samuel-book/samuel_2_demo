@@ -147,4 +147,4 @@ class CalculateSimParameters:
         # Save to csv
         self.pathway_simulation_parameters = df
         self.pathway_simulation_parameters.to_csv(
-            './data/data_for_sim.csv', index=False)
+            f'{self.data_path}/data_for_sim.csv', index=False)
