@@ -64,6 +64,7 @@ class ThrombolysisChoiceOutcome():
                 './output/thrombolysis_choice_results.csv')
 
         self.analyse_results()
+        self.predict_prototype_patients_all_teams()
 
     def analyse_results(self):
         """Analyse patient level results"""
@@ -121,9 +122,55 @@ class ThrombolysisChoiceOutcome():
         # Load prototype patient data
         self.prototype_patients = pd.read_csv(
             f'{self.data_path}/prototype_patients.csv', index_col='Patient prototype')
+        
+
+    def predict_prototype_patients_all_teams(self):
+        """Predict thrombolysis choice for prototype patients for all stroke teams."""
+
+        results = pd.DataFrame(index=self.prototype_patients.index)
+
+        # Set up encoder
+        encoder = OneHotEncoder(categories=[self.stroke_teams], sparse=False)
+
+        # Get benchmark predictions
+        decisions = []
+        for benchmark_hosp in self.benchmark_hospitals:
+            prototype_patients = self.prototype_patients.copy(deep=True)
+            prototype_patients['stroke_team'] = benchmark_hosp
+            # One hot encode stroke teams using OneHotEncoder with self.stroke_teams as categories
+            encoder.fit(prototype_patients[['stroke_team']])
+            one_hot_encoded = encoder.transform(prototype_patients[['stroke_team']])
+            one_hot_encoded_df = pd.DataFrame(
+                one_hot_encoded, columns=self.stroke_teams, index=prototype_patients.index)
+            X_one_hot = pd.concat([prototype_patients, one_hot_encoded_df], axis=1)
+            X_one_hot.drop('stroke_team', axis=1, inplace=True)
+            decisions.append(self.choice_model.predict_proba(X_one_hot)[:, 1])
+        decisions = np.array(decisions)
+        results['benchmark'] = decisions.mean(axis=0)
+
+        # Get predictions for all stroke teams
+        for stroke_team in self.stroke_teams:
+            prototype_patients = self.prototype_patients.copy(deep=True)
+            prototype_patients['stroke_team'] = stroke_team
+            # One hot encode stroke teams using OneHotEncoder with self.stroke_teams as categories
+            encoder.fit(prototype_patients[['stroke_team']])
+            one_hot_encoded = encoder.transform(prototype_patients[['stroke_team']])
+            one_hot_encoded_df = pd.DataFrame(
+                one_hot_encoded, columns=self.stroke_teams, index=prototype_patients.index)
+            X_one_hot = pd.concat([prototype_patients, one_hot_encoded_df], axis=1)
+            X_one_hot.drop('stroke_team', axis=1, inplace=True)
+            # Get predictions from self.choice_model
+            y_pred_proba = self.choice_model.predict_proba(X_one_hot)[:, 1]
+            results[stroke_team] = y_pred_proba
+
+        # Save (make percentage, transpose, rename empty column name)
+        results = results * 100
+        results = results.T
+        results.index.name = 'stroke_team'
+        results.to_csv('./output/prototype_patients_all_teams.csv')
 
 
-    def predict_prototype_patients(self, stroke_team, show=False):
+    def predict_prototype_patients_single_team(self, stroke_team, show=False, save=False):
 
         prototype_patients = self.prototype_patients.copy(deep=True)
         prototype_patients['stroke_team'] = stroke_team
@@ -172,11 +219,10 @@ class ThrombolysisChoiceOutcome():
         if show:
             plt.show()
 
-        # Save
-        plt.savefig(f'./output/prototype_patients{stroke_team}.png')
-
+        # Save & close
+        if save:
+            plt.savefig(f'./output/prototype_patients_{stroke_team}.png')
         plt.close()
-
 
     def run_choice_model(self):
         """Train the model to predict thrombolysis choice."""
