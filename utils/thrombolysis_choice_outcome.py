@@ -170,8 +170,9 @@ class ThrombolysisChoiceOutcome():
         results.to_csv('./output/prototype_patients_all_teams.csv')
 
 
-    def predict_prototype_patients_single_team(self, stroke_team, show=False, save=False):
+    def predict_prototype_patients_single_team(self, stroke_team, anon=True, show=False, save=False):
 
+        team_name = "Anonymous" if anon else stroke_team
         prototype_patients = self.prototype_patients.copy(deep=True)
         prototype_patients['stroke_team'] = stroke_team
         # One hot encode stroke teams using OneHotEncoder with self.stroke_teams as categories
@@ -202,7 +203,7 @@ class ThrombolysisChoiceOutcome():
         # Put results in DataFrame
         benchmark_results = pd.DataFrame()
         benchmark_results['Benchmark'] = benchmark * 100
-        benchmark_results[f'{stroke_team}'] = y_pred_proba * 100
+        benchmark_results[f'{team_name}'] = y_pred_proba * 100
 
         # Plot as vertical bar chart
         labels = [i.replace('+', '+\n') for i in list(self.prototype_patients.index)]

@@ -373,13 +373,14 @@ class Pathway:
         
         plt.close()
 
-    def plot_team_results(self, team, show=False):
+    def plot_team_results(self, team, anon=True, show=False):
 
         """Plot and save overall simulation results"""
 
         fig = plt.figure(figsize=(10,7))
 
         team_results = self.sim_results[self.sim_results['stroke_team'] == team]
+        team_name = 'Anonymous' if anon else team
 
         # Set index to scenario
         team_results.set_index('scenario', inplace=True)
@@ -426,7 +427,7 @@ class Pathway:
         ax2.set_xlabel('Scenario')
         ax2.grid(axis = 'y')
 
-        plt.title(f'Predicted pathway changes for stroke team: {team}')
+        plt.suptitle(f'Predicted pathway changes for stroke team: {team_name}')
         plt.tight_layout(pad=2)
 
         plt.savefig(f'./output/sim_results_team_{team}.jpg', dpi=300)
