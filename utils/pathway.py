@@ -324,11 +324,13 @@ class Pathway:
         rows = ['base',
              'onset',
              'speed',
+             'ambo',
              'benchmark',
              'speed_onset',
              'speed_benchmark',
              'onset_benchmark',
-             'speed_onset_benchmark']
+             'speed_onset_benchmark',
+             'speed_onset_benchmark_ambo']
         
         # reorder rows to above
         self.summary_sim_results = self.summary_sim_results.reindex(rows)
@@ -342,9 +344,9 @@ class Pathway:
         ax1 = fig.add_subplot(121)        
         y1 = self.summary_sim_results['Percent_Thrombolysis'].values
         ax1.bar(x,y1)
-        ax1.set_ylim(0,20)
+        ax1.set_ylim(0,22)
         plt.xticks(rotation=90)
-        plt.yticks(np.arange(0,22,2))
+        plt.yticks(np.arange(0,23,2))
         ax1.set_title('Thrombolysis use (%)')
         ax1.set_ylabel('Thrombolysis use (%)')
         ax1.set_xlabel('Scenario')
@@ -353,9 +355,9 @@ class Pathway:
         ax2 = fig.add_subplot(122)
         y1 = self.summary_sim_results['Additional_good_outcomes_per_1000_patients'].values
         ax2.bar(x,y1, color='r')
-        ax2.set_ylim(0,20)
+        ax2.set_ylim(0,22)
         plt.xticks(rotation=90)
-        plt.yticks(np.arange(0,22,2))
+        plt.yticks(np.arange(0,23,2))
         ax2.set_title('Additional good outcomes\nper 1,000 admissions')
         ax2.set_ylabel('Additional good outcomes\nper 1,000 admissions')
         ax2.set_xlabel('Scenario')
@@ -388,11 +390,13 @@ class Pathway:
         rows = ['base',
              'onset',
              'speed',
+             'ambo',
              'benchmark',
              'speed_onset',
              'speed_benchmark',
              'onset_benchmark',
-             'speed_onset_benchmark']
+             'speed_onset_benchmark',
+             'speed_onset_benchmark_ambo']
         
         # reorder rows to above
         team_results = team_results.reindex(rows)
@@ -459,6 +463,23 @@ class Pathway:
         # Get results
         results = self.model_ssnap_pathway_scenarios(hospital_performance)
         results['scenario'] = 'speed'
+        # Add to results_all
+        self.sim_results = pd.concat([self.sim_results, results], axis=0)
+
+        ############################################## 
+        # SPEED (Ambo) #
+        ##############################################
+
+        # Create scenarios
+        hospital_performance = self.hospital_performance_original.copy()
+        # Unlog onset_arrival_mins_mu, subtract 15 and log again
+        onset_arrival_mins = np.exp(hospital_performance['onset_arrival_mins_mu'])
+        onset_arrival_mins -= 15
+        onset_arrival_mins = np.maximum(onset_arrival_mins, 1)
+        hospital_performance['onset_arrival_mins_mu'] = np.log(onset_arrival_mins)
+        # Get results
+        results = self.model_ssnap_pathway_scenarios(hospital_performance)
+        results['scenario'] = 'ambo'
         # Add to results_all
         self.sim_results = pd.concat([self.sim_results, results], axis=0)
 
@@ -590,9 +611,10 @@ class Pathway:
         # Add to results_all
         self.sim_results = pd.concat([self.sim_results, results], axis=0)
 
-        #######
-        # All #
-        #######
+        ###################
+        # All except ambo #
+        ###################
+
         # Create scenarios
         hospital_performance = self.hospital_performance_original.copy()
         # Onset known
@@ -620,10 +642,54 @@ class Pathway:
         hospital_performance['arrival_scan_arrival_mins_sigma'] = 0
         hospital_performance['scan_needle_mins_mu'] = np.log(15)
         hospital_performance['scan_needle_mins_sigma'] = 0
-        
+
         # Get results
         results = self.model_ssnap_pathway_scenarios(hospital_performance)
         results['scenario'] = 'speed_onset_benchmark'
+        # Add to results_all
+        self.sim_results = pd.concat([self.sim_results, results], axis=0)
+
+
+        ##############
+        # All + Ambo #
+        ##############
+        # Create scenarios
+        hospital_performance = self.hospital_performance_original.copy()
+        # Onset known
+        onset_known = self.hospital_performance_original['onset_known']
+        onset_known_upper_q = np.percentile(onset_known, 75)
+        adjusted_onset_known = []
+        for val in onset_known:
+            if val > onset_known_upper_q:
+                adjusted_onset_known.append(val)
+            else:
+                adjusted_onset_known.append(onset_known_upper_q)
+        hospital_performance['onset_known'] = adjusted_onset_known
+        # Merge in benchmark rates (to ensure order is correct)
+        hospital_performance = hospital_performance.merge(
+            self.benchmark_thrombolysis, left_on='stroke_team', right_index=True, how='left')
+        benchmark_adjustment = (hospital_performance['benchmark_decision'] / 
+                                hospital_performance['thrombolysis'])
+        hospital_performance['eligable'] *= benchmark_adjustment
+        # Limit hospital_performance['eligable'] to 0.05 to 0.95 (may be required with demo data)
+        hospital_performance['eligable'] = np.clip(hospital_performance['eligable'], 0.05, 0.95)
+
+        # Speed
+        hospital_performance['scan_within_4_hrs'] = 0.95
+        hospital_performance['arrival_scan_arrival_mins_mu'] = np.log(15)
+        hospital_performance['arrival_scan_arrival_mins_sigma'] = 0
+        hospital_performance['scan_needle_mins_mu'] = np.log(15)
+        hospital_performance['scan_needle_mins_sigma'] = 0
+
+        # Ambo: Unlog onset_arrival_mins_mu, subtract 15 and log again
+        onset_arrival_mins = np.exp(hospital_performance['onset_arrival_mins_mu'])
+        onset_arrival_mins -= 15
+        onset_arrival_mins = np.maximum(onset_arrival_mins, 1)
+        hospital_performance['onset_arrival_mins_mu'] = np.log(onset_arrival_mins)
+        
+        # Get results
+        results = self.model_ssnap_pathway_scenarios(hospital_performance)
+        results['scenario'] = 'speed_onset_benchmark_ambo'
         # Add to results_all
         self.sim_results = pd.concat([self.sim_results, results], axis=0)
 

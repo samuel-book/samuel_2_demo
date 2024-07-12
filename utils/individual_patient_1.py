@@ -18,6 +18,8 @@ class IndividualPatientModel:
         Initialize the class.
         """
 
+        self.data_path = data_path
+
         self.thrombolysis_choice_fields = [
             'stroke_team',
             'onset_to_arrival_time',
@@ -43,9 +45,8 @@ class IndividualPatientModel:
             'discharge_disability'
         ]
 
+        self.data = pd.read_csv(f'{data_path}/ml_data.csv', low_memory=False)    
 
-        self.data = pd.read_csv(f'{data_path}/ml_data.csv', low_memory=False)        
- 
         # Set up one hot encoder
         self.stroke_teams = list(self.data['stroke_team'].unique())
         self.stroke_teams.sort()
@@ -69,11 +70,8 @@ class IndividualPatientModel:
         outcome_data = outcome_data[self.thrombolysis_outcome_fields]
 
         # Remove empty rows
-        outcome_data = outcome_data.dropna()
-
-        # One hot encode stroke teams
-        one_hot = enc.fit_transform(outcome_data[['stroke_team']]).toarray()
-        one_hot = pd.DataFrame(one_hot, columns=self.stroke_teams)
+        self.outcome_data = outcome_data.dropna()
+        
         outcome_data = pd.concat([outcome_data, one_hot], axis=1)
         self.outcome_data = outcome_data.drop(columns=['stroke_team'])
 
@@ -300,7 +298,7 @@ class IndividualPatientModel:
         p_treated = pd.concat([p, one_hot], axis=1)
         p_treated.drop('stroke_team', axis=1, inplace=True)
         p_untreated = p_treated.copy()
-        p_untreated['onset_to_thrombolysis'] = -10
+        p_untreated['onset_to_thrombolysis'] = 99999
     
         for i in range(len(self.outcome_models)):        
         # Get untreated and treated distributions

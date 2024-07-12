@@ -214,15 +214,18 @@ class ThrombolysisChoiceOutcome():
         ax.set_ylabel('% Patients likely to receive thrombolysis(%)')
         # rebuild the xticklabels
         ax.set_xticklabels(labels, rotation=90)
-        ax.set_title(f'Percentage of patients likely to receive thrombolysis\n({stroke_team})')
+        ax.set_title(f'Percentage of patients likely to receive thrombolysis)')
         ax.grid(axis = 'y')
 
-        if show:
-            plt.show()
 
         # Save & close
         if save:
-            plt.savefig(f'./output/prototype_patients_{stroke_team}.png')
+            plt.savefig(f'./output/prototype_patients_{stroke_team}.png', bbox_inches='tight')
+
+
+        if show:
+            plt.show()
+        
         plt.close()
 
     def run_choice_model(self):
