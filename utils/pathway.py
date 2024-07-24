@@ -364,7 +364,7 @@ class Pathway:
         ax2.grid(axis = 'y')
 
 
-        plt.title('Predicted pathway changes across all stroke teams')
+        plt.suptitle('Predicted pathway changes across all stroke teams')
         plt.tight_layout(pad=2)
 
         plt.savefig('./output/sim_results_summary.jpg', dpi=300)
