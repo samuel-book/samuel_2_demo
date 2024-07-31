@@ -211,10 +211,9 @@ class ThrombolysisChoiceOutcome():
         ax = fig.add_subplot(111)
         benchmark_results.plot.bar(ax=ax)
         ax.set_ylim(0,100)
-        ax.set_ylabel('% Patients likely to receive thrombolysis(%)')
+        ax.set_ylabel('% Patients likely to receive thrombolysis')
         # rebuild the xticklabels
         ax.set_xticklabels(labels, rotation=90)
-        ax.set_title(f'Percentage of patients likely to receive thrombolysis)')
         ax.grid(axis = 'y')
 
 
