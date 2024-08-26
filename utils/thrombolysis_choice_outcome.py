@@ -12,7 +12,7 @@ from xgboost import XGBClassifier
 
 class ThrombolysisChoiceOutcome():
 
-    def __init__(self, data_path, rerun_models=True):
+    def __init__(self, data_path):
         """Constructor."""
 
         self.data_path = data_path
@@ -45,8 +45,6 @@ class ThrombolysisChoiceOutcome():
 
         self.number_of_benchmark_hospitals = 25
 
-        self.rerun_models = rerun_models
-
         # Utilities from Wang X, Moullaali TJ, Li Q, Berge E, Robinson TG, Lindley R, et al.
         # Utility-Weighted Modified Rankin Scale Scores for the Assessment of Stroke Outcome.
         # Stroke. 2020 Aug 1;51(8):2411-7
@@ -57,12 +55,9 @@ class ThrombolysisChoiceOutcome():
     def run(self):
         """Run the model."""
         self.load_data()
-        if self.rerun_models:
-            self.run_choice_model()
-            self.run_outcome_model()
-            self.patient_results.to_csv(
-                './output/thrombolysis_choice_results.csv')
-
+        self.run_choice_model()
+        self.run_outcome_model()
+        self.patient_results.to_csv('./output/thrombolysis_choice_results.csv')
         self.analyse_results()
         self.predict_prototype_patients_all_teams()
 
@@ -125,7 +120,18 @@ class ThrombolysisChoiceOutcome():
         
 
     def predict_prototype_patients_all_teams(self):
-        """Predict thrombolysis choice for prototype patients for all stroke teams."""
+        """
+        Predict thrombolysis choice for prototype patients for all stroke teams.
+
+        Uses thrombolysis choice model fitted in `run_choice_model`
+
+        * Get thrombolysis use benchmark prediction for each prototype patient
+            (majority vote of benchmark hospitals)
+        * Get thrombolysis use prediction for each prototype patient at each stroke team
+        * Report thtombolysis use as a percentage (based on probability of receiving thrombolysis; 
+            this will also be the proportion of those patients who are likely to receive thrombolysis.
+        * Save as `prototype_patients_all_teams.csv`
+        """
 
         results = pd.DataFrame(index=self.prototype_patients.index)
 
@@ -228,7 +234,19 @@ class ThrombolysisChoiceOutcome():
         plt.close()
 
     def run_choice_model(self):
-        """Train the model to predict thrombolysis choice."""
+        """
+        Train a model to predict thrombolysis choice.
+   
+        * Get X and y data
+        * One-hot encode stroke teams
+        * Fit XGBoost model on all data (`learning_rate=0.5` prevents loss of effect of spare stroke team features)
+        * Get predictions of y, and assess accuracy
+        * Get hospital SHAP for each patients, and average by stroke team
+        * Identify benchmark hospitals (by hospital SHAP)
+        * Save hopsital SHAP values to `thrombolysis_choice_hospital_shap.csv`
+        * Get benchmark decisions for each patient
+        * Save all patients SHAP values to `thrombolysis_choice_shap.csv`        
+        """
 
         # Get X and y
         X = self.data[self.thrombolysis_choice_X_fields]
@@ -244,8 +262,7 @@ class ThrombolysisChoiceOutcome():
         X_one_hot.drop('stroke_team', axis=1, inplace=True)
 
         # Define and Fit model
-        self.choice_model = XGBClassifier(
-            verbosity=0, seed=42, learning_rate=0.5)
+        self.choice_model = XGBClassifier(verbosity=0, seed=42, learning_rate=0.5)
         self.choice_model.fit(X_one_hot, y)
 
         # Get predictions
@@ -271,8 +288,7 @@ class ThrombolysisChoiceOutcome():
         shap_values_df = pd.DataFrame(shap_values, columns=list(X_one_hot))
 
         # Sum hospital SHAPs for each patient
-        shap_values_df['hospital'] = shap_values_df[self.stroke_teams].sum(
-            axis=1)
+        shap_values_df['hospital'] = shap_values_df[self.stroke_teams].sum(axis=1)
         for team in self.stroke_teams:
             shap_values_df.drop(team, axis=1, inplace=True)
 
@@ -285,7 +301,7 @@ class ThrombolysisChoiceOutcome():
         hospital_mean_shap['hospital_SHAP'] = \
             shap_values_df.groupby('stroke_team').mean()['hospital']
 
-        # Identify and label top 25 benchmark hospitals
+        # Identify and label top benchmark hospitals
         hospital_mean_shap.sort_values(
             by='hospital_SHAP', ascending=False, inplace=True)
         benchmark = np.zeros(len(hospital_mean_shap))
@@ -325,6 +341,28 @@ class ThrombolysisChoiceOutcome():
 
     def run_outcome_model(self):
         """
+        Train a model to predict outcomes (probabilities of discharge mRS).
+        The model is trained only on infractions stroke patients who did not also have thrombectomy.
+        Predictions of outcomes are made for all patients, but are removed for non-infarction stroke patients.
+
+        * Get X and y data
+        * One-hot encode stroke teams
+        * Fit XGBoost model on all data (`learning_rate=0.5` prevents loss of effect of spare stroke team features)
+        * Get predictions of outcomes (mRS probabilities), and assess accuracy
+        * Predict outcomes all patients with and without thrombolysis
+            * Use onset to thrombolysis of 99999 when no thrombolysis
+            * Use simulated_onset_to_thrombolysis for use of thrombolysis
+        * Calculate further outcome results from mRS probabilities:
+            * Probability weighted mRS (untreated, treated, difference) 
+            * Proportion mRS 0-4  (untreated, treated, difference) 
+            * Utility  (untreated, treated, difference) 
+            * Improved outcome (improved probability weighted mRS **and** improved proportion mRS 0-4)
+        * Compare outcomes with observed use of thrombolysis:
+            * TP (true positive) = thrombolysis given and predicted improved outcome
+            * FP (false positive) = thrombolysis given and predicted not improved outcome
+            * FN (false negative) = thrombolysis not given and predicted improved outcome
+            * TN (true negative) = thrombolysis not given and predicted not improved outcome
+        * Delete outcomes for non-infraction stroke
         """
 
         # For training remove patients who have received thrombectomy or who are haemorrhagic
@@ -342,8 +380,7 @@ class ThrombolysisChoiceOutcome():
         X_train_one_hot.drop('stroke_team', axis=1, inplace=True)
 
         # Define and Fit model
-        self.outcome_model = XGBClassifier(
-            verbosity=0, seed=42, learning_rate=0.5)
+        self.outcome_model = XGBClassifier(verbosity=0, seed=42, learning_rate=0.5)
         self.outcome_model.fit(X_train_one_hot, y_train)
 
         # Get AUC
@@ -353,7 +390,7 @@ class ThrombolysisChoiceOutcome():
         print('\nAccuracy score is for guidance only; all data is used to fit model')
         print(f'Outcome multiclass ROC AUC {auc:.3f}')
 
-        # Predict all patients with and without thrombolysis
+        # Predict outcomes all patients with and without thrombolysis
         X = self.data[self.outcome_X_fields]
         y = self.data[self.outcome_y_field].values
         encoder = OneHotEncoder(categories=[self.stroke_teams], sparse=False)

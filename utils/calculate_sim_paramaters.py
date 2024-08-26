@@ -5,21 +5,33 @@ import pandas as pd
 class CalculateSimParameters:
 
     """
-    Loads data ready for models.
+    Summarises patient pathways processes and speeds for the pathway simulation model.
 
-    Attributes:
+    For each stroke team records:
 
-    full_data:
-        Pandas dataframe of full SSNAP data (Cleaned)
-
-
-    Methods:
+    * *thrombolysis_rate*: The proportion of all arrivals receiving thrombolysis
+    * *admissions*: The number of admissions in the input data
+    * *age_80_plus*: The proportion of patients aged 80+ (of those arriving within 4 hrs of known stroke onset)
+    * *onset_known*: The proportion of patients with known onset time
+    * *known_arrival_within_4hrs*: The proportion of patients arriving within 4 hours of known onset time
+    * *onset_arrival_mins_mu*: Of those arriving in 4 hrs, the mean of log (ln) onset to arrival time
+    * *onset_arrival_mins_sigma*: As above, but standard deviation
+    * *scan_within_4_hrs*: Of those arriving in 4 hrs, the proportion of patients scanned within 4 hrs of arrival
+    * *arrival_scan_arrival_mins_mu*: Of those arriving in 4 hrs and scanned within 4 hrs arrival, the mean of log (ln) of arrival to scan time
+    * *arrival_scan_arrival_mins_sigma*: As above, but standard deviation
+    * *onset_scan_4_hrs*: The proportion with onset-to-scan within 4 hrs
+    * *eligible*: The proportion of patients with onset-to-scan within 4 hrs who receive thrombolysis
+    * *scan_needle_mins_mu*: For those receiving thrombolysis, the mean log (ln) scan-to-needle time
+* *scan_needle_mins_sigma*: A above, but standard deviation
 
     """
 
     def __init__(self, data_path, limit_to_ambo=False):
         """
-        Creates the data load object
+        * Creates the CalculateSimParameters object and loads patient level data.
+        * Required data is `patient_pathway_data.csv`
+        * Limits to ambulance arrivals if required (default is False)
+        * Removes stroke teams with fewer than 100 admissions in the input data
         """
 
         self.data_path = data_path
@@ -73,31 +85,31 @@ class CalculateSimParameters:
             # Get thrombolysis rate
             thrombolysis_rate.append(group_df['thrombolysis'].mean())
 
-            # Record onset known proportion and remove rest
+            # Record onset known proportion and remove rest (unknown onset time)
             onset_known.append(group_df['onset_known'].mean())
             group_df = group_df[group_df['onset_known'] == 1]
 
-            # Record onset <4 hours and remove rest
+            # Record onset-to-arrival <4hrs and remove rest (arrivals more than 4 hrs after stroke onset)
             mask = group_df['onset_to_arrival_time'] <= 240
             known_arrival_within_4hrs.append(mask.mean())
             group_df = group_df[mask]
             
-            # Calc proportion 80+ (of those arriving within 4 hours)
+            # Get proportion 80+ (of those arriving within 4 hours)
             over_80 = group_df['age'] >= 80
             age_80_plus.append(over_80.mean())
 
-            # Log mean/sd of onset to arrival
-            # Remove any with onset to arrival time of< 0
+            # Log (ln) mean/sd of onset to arrival (remove any onset to arrival time of < 0)
             mask = group_df['onset_to_arrival_time'] > 0
             group_df = group_df[mask]
             ln_onset_to_arrival = np.log(group_df['onset_to_arrival_time'])
             onset_arrival_mins_mu.append(ln_onset_to_arrival.mean())
             onset_arrival_mins_sigma.append(ln_onset_to_arrival.std())
 
-            # Record scan within 4 hours of arrival (and remove the rest)
-            # Remove any with arrival to scan time of < 0
+            # Remove any with arrival-to-scan time of <= 0
             mask = group_df['arrival_to_scan_time'] > 0
             group_df = group_df[mask]
+
+            # Record proportion arrival-to-scan within 4 hours of arrival (and remove the rest)
             mask = group_df['arrival_to_scan_time'] <= 240
             scan_within_4_hrs.append(mask.mean())
             group_df = group_df[mask]
@@ -107,7 +119,7 @@ class CalculateSimParameters:
             arrival_scan_arrival_mins_mu.append(ln_arrival_to_scan.mean())
             arrival_scan_arrival_mins_sigma.append(ln_arrival_to_scan.std())
 
-            # Record onset to scan in 4 hours and remove rest
+            # Get proportion of patients with onset-to-scan of <=4hrs, and remove rest
             mask = (group_df['onset_to_arrival_time'] + 
                     group_df['arrival_to_scan_time']) <= 240
             onset_scan_4_hrs.append(mask.mean())
