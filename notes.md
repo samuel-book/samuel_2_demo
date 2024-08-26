@@ -107,6 +107,14 @@ Also records the percentage of prototype patients likely to receive thrombolysis
 
 Calculated data for the pathway simulation model.
 
+### `sim_results_all.csv`
+
+Simulation results for each stroke team and each scenario.
+
+### `sim_results_summary.csv`
+
+Aggregated results (combine all stroke teams) for each scenario.
+
 ## Classes
 
 ### ThrombolysisChoiceOutcome
