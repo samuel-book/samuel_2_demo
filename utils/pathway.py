@@ -297,7 +297,7 @@ class Pathway:
                 trial_df['Baseline_good_outcomes'].std(),
                 (trial_df['Baseline_good_outcomes'].mean() - 
                     stats.norm.interval(0.95, loc=trial_df['Baseline_good_outcomes'].mean(),
-                    scale=trial_df['Baseline_good_outcomes'].std() / sqrt(trials))[0]),
+                    scale=trial_df['Baseline_good_outcomes'].std() / sqrt(self.trials))[0]),
                 trial_df['Rx'].median(),
                 trial_df['Rx'].quantile(0.05),
                 trial_df['Rx'].quantile(0.95),
@@ -305,7 +305,7 @@ class Pathway:
                 trial_df['Rx'].std(),
                 (trial_df['Rx'].mean() - stats.norm.interval(
                     0.95, loc=trial_df['Rx'].mean(),
-                    scale=trial_df['Rx'].std() / sqrt(trials))[0]),
+                    scale=trial_df['Rx'].std() / sqrt(self.trials))[0]),
                 trial_df['Additional_good_outcomes'].median(),
                 trial_df['Additional_good_outcomes'].quantile(0.05),
                 trial_df['Additional_good_outcomes'].quantile(0.95),
@@ -313,7 +313,7 @@ class Pathway:
                 trial_df['Additional_good_outcomes'].std(),
                 (trial_df['Additional_good_outcomes'].mean() - 
                     stats.norm.interval(0.95, loc=trial_df['Additional_good_outcomes'].mean(),
-                    scale=trial_df['Additional_good_outcomes'].std() / sqrt(trials))[0]),
+                    scale=trial_df['Additional_good_outcomes'].std() / sqrt(self.trials))[0]),
                 trial_df['onset_to_needle'].mean()
                 ])
             # add scenario results to results dataframe
