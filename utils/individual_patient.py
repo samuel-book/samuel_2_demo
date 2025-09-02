@@ -233,28 +233,49 @@ class IndividualPatientModel:
     def predict_patient(
             self, patient_data, save=False, filename=None, anon=False):
 
+        def set_up_patient(patient, fields):
+            p = patient[fields]
+            enc = OneHotEncoder(categories=[self.stroke_teams])
+            one_hot = enc.fit_transform(p[['stroke_team']]).toarray()
+            one_hot = pd.DataFrame(one_hot, columns=self.stroke_teams)
+            p = pd.concat([p, one_hot], axis=1)
+            p.drop('stroke_team', axis=1, inplace=True)
+            return p
+            
+        def predict(choice_models, p):
+            a = []
+            for i in range(len(choice_models)):
+                model = choice_models[i]
+                a.append(model.predict_proba(p)[:,1])
+            return a
+
+        def calculate_mean_std_ci(arr, n):
+            """Calculate stats."""
+            if len(arr.shape) > 1:
+                # 2D array.
+                m = np.mean(arr, axis=0)
+                s = np.std(arr, axis=0)
+            else:
+                # 1D array.
+                m = np.mean(arr)
+                s = np.std(arr)
+            sem = s / np.sqrt(n)
+            ci = sem * scipy.stats.t.ppf((1 + 0.95) / 2., n-1)
+            return m, s, c
+
         patient = pd.DataFrame(patient_data, index=[0])
 
         # Get thrombolysis choice prediction
         fields = self.thrombolysis_choice_fields.copy()
         fields.remove('thrombolysis')
-        patient_choice = patient[fields]
-        enc = OneHotEncoder(categories=[self.stroke_teams])
-        one_hot = enc.fit_transform(patient_choice[['stroke_team']]).toarray()
-        one_hot = pd.DataFrame(one_hot, columns=self.stroke_teams)
-        patient_choice = pd.concat([patient_choice, one_hot], axis=1)
-        patient_choice.drop('stroke_team', axis=1, inplace=True)
-        thrombolysis_predictions = []
-        for i in range(len(self.choice_models)):
-            model = self.choice_models[i]
-            thrombolysis_predictions.append(model.predict_proba(patient_choice)[:,1])
-        thrombolysis_predictions = np.array(thrombolysis_predictions)
-        self.thrombolysis_prediction = np.mean(thrombolysis_predictions)
-        self.thrombolysis_prediction_std = np.std(thrombolysis_predictions)
-        sem = self.thrombolysis_prediction_std / np.sqrt(len(thrombolysis_predictions))
-        self.thrombolysis_prediction_ci = \
-            sem * scipy.stats.t.ppf((1 + 0.95) / 2., len(thrombolysis_predictions)-1)
-
+        patient_choice = set_up_patient(patient, fields)
+        thrombolysis_predictions = predict(self.choice_models, patient_choice)
+        # Stats:
+        key = 'thrombolysis_prediction'
+        self[key], self[f'{key}_std'], self[f'{key}_ci'] = (
+            calculate_mean_std_ci(np.array(thrombolysis_predictions),
+                                  len(thrombolysis_predictions)))
+        
         # Get benchmark thrombolysis predictions
         benchmark_predictions = []
         for benchmark_hosp in self.benchmark_hospitals:
@@ -264,124 +285,76 @@ class IndividualPatientModel:
             p[f'{current_team}'] = False
             p[f'{benchmark_hosp}'] = True
             # Get predictions
-            thrombolysis_predictions = []
-            for i in range(len(self.choice_models)):
-                model = self.choice_models[i]
-                thrombolysis_predictions.append(model.predict_proba(p)[:,1])
+            thrombolysis_predictions = predict(self.choice_models, p)
             # Reset hospital
             p[f'{benchmark_hosp}'] = False
             # Get mean prediction
-            thrombolysis_predictions = np.array(thrombolysis_predictions)
-            benchmark_prediction = np.mean(thrombolysis_predictions)
+            benchmark_prediction = np.mean(np.array(thrombolysis_predictions))
             benchmark_predictions.append(benchmark_prediction)
-        
-        self.thrombolysis_choice_benchmark_mean = np.mean(benchmark_predictions)
-        self.thrombolysis_choice_benchmark_std = np.std(benchmark_predictions)
-        sem = self.thrombolysis_choice_benchmark_std / np.sqrt(len(benchmark_predictions))
-        self.thrombolysis_choice_benchmark_ci = \
-            sem * scipy.stats.t.ppf((1 + 0.95) / 2., len(benchmark_predictions)-1)
+        # Stats:
+        key = 'thrombolysis_choice_benchmark'
+        self[key], self[f'{key}_std'], self[f'{key}_ci'] = (
+            calculate_mean_std_ci(np.array(benchmark_predictions),
+                                  len(benchmark_predictions)))
 
         # Get thrombolysis outcome prediction
-        untreated_dist = []
-        treated_dist = []
-        untreated_less_3 = []
-        treated_less_3 = []
-        untreated_more_4 = []
-        treated_more_4 = []
-        untreated_weighted_mrs = []
-        treated_weighted_mrs = []
         improvement = []
         fields = self.thrombolysis_outcome_fields.copy()
         fields.remove('discharge_disability')
-        p = patient[fields]
-        enc = OneHotEncoder(categories=[self.stroke_teams])
-        one_hot = enc.fit_transform(p[['stroke_team']]).toarray()
-        one_hot = pd.DataFrame(one_hot, columns=self.stroke_teams)
-        p_treated = pd.concat([p, one_hot], axis=1)
-        p_treated.drop('stroke_team', axis=1, inplace=True)
+        p_treated = set_up_patient(patient, fields)
         p_untreated = p_treated.copy()
         p_untreated['onset_to_thrombolysis'] = 99999
-    
-        for i in range(len(self.outcome_models)):        
-        # Get untreated and treated distributions
-            untreated = self.outcome_models[i].predict_proba(p_untreated).flatten()
-            treated = self.outcome_models[i].predict_proba(p_treated).flatten()
-            untreated_dist.append(untreated)
-            treated_dist.append(treated)
-            # Get weighted average of mRS scores
-            weighted_untreated = np.sum(untreated * np.arange(7))
-            weighted_treated = np.sum(treated * np.arange(7))
-            untreated_weighted_mrs.append(weighted_untreated)
-            treated_weighted_mrs.append(weighted_treated)
-            improvement.append(0-(weighted_treated - weighted_untreated))
-            # Get untreated and treated distributions for mRS <3
-            untreated_less_3.append(np.sum(untreated[:3]))
-            treated_less_3.append(np.sum(treated[:3]))
-            # Get untreated and treated distributions for mRS >4
-            untreated_more_4.append(np.sum(untreated[5:]))
-            treated_more_4.append(np.sum(treated[5:]))
 
-        # Get mean distribution predictions
-        untreated_dist = np.array(untreated_dist)
-        treated_dist = np.array(treated_dist)
-        self.untreated_dist = np.mean(untreated_dist, axis=0)
-        self.treated_dist = np.mean(treated_dist, axis=0)
-        self.untreated_dist_std = np.std(untreated_dist, axis=0)
-        self.treated_dist_std = np.std(treated_dist, axis=0)
-        n = len(self.outcome_models)
-        sem = self.untreated_dist_std / np.sqrt(n)
-        self.untreated_dist_ci = sem * scipy.stats.t.ppf((1 + 0.95) / 2., n-1)
-        sem = self.treated_dist_std / np.sqrt(n)
-        self.treated_dist_ci = sem * scipy.stats.t.ppf((1 + 0.95) / 2., n-1)
-        # Get mean predictions for mRS <3
-        untreated_less_3 = np.array(untreated_less_3)
-        treated_less_3 = np.array(treated_less_3)
-        self.untreated_less_3 = np.mean(untreated_less_3)
-        self.treated_less_3 = np.mean(treated_less_3)
-        self.untreated_less_3_std = np.std(untreated_less_3)
-        self.treated_less_3_std = np.std(treated_less_3)
-        sem = self.untreated_less_3_std / np.sqrt(n)
-        self.untreated_less_3_ci = sem * scipy.stats.t.ppf((1 + 0.95) / 2., n-1)
-        sem = self.treated_less_3_std / np.sqrt(n)
-        self.treated_less_3_ci = sem * scipy.stats.t.ppf((1 + 0.95) / 2., n-1)
-        # Get change in proportion mRS <3
-        self.change_in_less_3 = np.mean(self.treated_less_3 - self.untreated_less_3)
-        self.change_in_less_3_std = np.std(self.treated_less_3 - self.untreated_less_3)
-        sem = self.change_in_less_3_std / np.sqrt(n)
-        self.change_in_less_3_ci = sem * scipy.stats.t.ppf((1 + 0.95) / 2., n-1)         
-        # Get mean predictions for mRS >4
-        untreated_more_4 = np.array(untreated_more_4)
-        treated_more_4 = np.array(treated_more_4)
-        self.untreated_more_4 = np.mean(untreated_more_4)
-        self.treated_more_4 = np.mean(treated_more_4)
-        self.untreated_more_4_std = np.std(untreated_more_4)
-        self.treated_more_4_std = np.std(treated_more_4)
-        sem = self.untreated_more_4_std / np.sqrt(n)
-        self.untreated_more_4_ci = sem * scipy.stats.t.ppf((1 + 0.95) / 2., n-1)        
-        sem = self.treated_more_4_std / np.sqrt(n)
-        self.treated_more_4_ci = sem * scipy.stats.t.ppf((1 + 0.95) / 2., n-1)
-        # Get change in proportion mRS >4
-        self.change_in_more_4 = np.mean(self.treated_more_4 - self.untreated_more_4)
-        self.change_in_more_4_std = np.std(self.treated_more_4 - self.untreated_more_4)
-        sem = self.change_in_more_4_std / np.sqrt(n)
-        self.change_in_more_4_ci = sem * scipy.stats.t.ppf((1 + 0.95) / 2., n-1)
-        # Get mean predictions for weighted mRS
-        untreated_weighted_mrs = np.array(untreated_weighted_mrs)
-        treated_weighted_mrs = np.array(treated_weighted_mrs)
-        self.untreated_weighted_mrs = np.mean(untreated_weighted_mrs)
-        self.treated_weighted_mrs = np.mean(treated_weighted_mrs)
-        self.untreated_weighted_mrs_std = np.std(untreated_weighted_mrs)
-        self.treated_weighted_mrs_std = np.std(treated_weighted_mrs)
-        sem = self.untreated_weighted_mrs_std / np.sqrt(n)
-        self.untreated_weighted_mrs_ci = sem * scipy.stats.t.ppf((1 + 0.95) / 2., n-1)
-        sem = self.treated_weighted_mrs_std / np.sqrt(n)
-        self.treated_weighted_mrs_ci = sem * scipy.stats.t.ppf((1 + 0.95) / 2., n-1)
-        # Get mean predictions for improvement
-        improvement = np.array(improvement)
-        self.improvement = np.mean(improvement)
-        self.improvement_std = np.std(improvement)
-        sem = self.improvement_std / np.sqrt(n)
-        self.improvement_ci= sem * scipy.stats.t.ppf((1 + 0.95) / 2., n-1)        
+        n_models = len(self.outcome_models)
+        
+        dict_dists = {'untreated': {}, 'treated': {}}
+        for d in dict_dists.keys():
+            for k in ['dist', 'weighted_mrs', 'less_3', 'more_4']:
+                dict_dists[d][k] = []
+        for i in range(n_models):
+            for t in dict_dists.keys():
+                # Get untreated and treated distributions
+                p_arr = p_untreated if t == 'untreated' else p_treated
+                dist = self.outcome_models[i].predict_proba(p_arr).flatten()
+                dict_dists[t]['dist'].append(dist)
+                # Get weighted average of mRS scores
+                weighted_dist = np.sum(dist * np.arange(7))
+                dict_dists[t]['weighted_mrs'].append(weighted_dist)
+                # Get untreated and treated distributions for mRS <3
+                dict_dists[t]['less_3'].append(np.sum(dist[:3]))
+                # Get untreated and treated distributions for mRS >4
+                dict_dists[t]['more_4'].append(np.sum(dist[5:]))
+            improvement.append(0-(dict_dists['treated']['weighted_mrs'] -
+                                  dict_dists['untreated']['weighted_mrs']))
+
+        # Calculate and store the mean, std and CI of the following 
+        # arrays using attribute names from the dict keys:
+        dict_arrays = {
+            'untreated_dist': np.array(dict_dists['untreated']['dist']),
+            'treated_dist': np.array(dict_dists['treated']['dist']),
+            'untreated_less_3': np.array(dict_dists['untreated']['less_3']),
+            'treated_less_3': np.array(dict_dists['treated']['less_3']),
+            'untreated_more_4': np.array(dict_dists['untreated']['more_4']),
+            'treated_more_4': np.array(dict_dists['treated']['more_4']),
+            'untreated_weighted_mrs': (
+                np.array(dict_dists['untreated']['weighted_mrs'])),
+            'treated_weighted_mrs': (
+                np.array(dict_dists['treated']['weighted_mrs'])),
+            'improvement': np.array(improvement),
+        }
+        for key, arr in dict_arrays.items():
+            self[key], self[f'{key}_std'], self[f'{key}_ci'] = (
+                calculate_mean_std_ci(arr, n_models))
+        # Second round now that some bits have been calculated:
+        dict_arrays = {
+            'change_in_less_3': (np.array(self.treated_less_3) -
+                                 np.array(self.untreated_less_3)),
+            'change_in_more_4': (np.array(self.treated_more_4) -
+                                 np.array(self.untreated_more_4)),
+        }
+        for key, arr in dict_arrays.items():
+            self[key], self[f'{key}_std'], self[f'{key}_ci'] = (
+                calculate_mean_std_ci(arr, n_models))
         
         # Call plotting function
         self.plot_patient_results(patient, save, filename, anon)
