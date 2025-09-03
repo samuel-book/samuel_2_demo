@@ -231,7 +231,7 @@ class IndividualPatientModel:
 
 
     def predict_patient(
-            self, patient_data, save=False, filename=None, anon=False):
+            self, patient_data, save=False, filename=None, anon=False, make_plot=True):
 
         def set_up_patient(patient, fields):
             p = patient[fields]
@@ -313,9 +313,11 @@ class IndividualPatientModel:
 
         n_models = len(self.outcome_models)
         
+        dist_keys = ['dist', 'less_3', 'more_4', 'weighted_mrs',
+                     'independent', 'dependent', 'dead']
         dict_dists = {'untreated': {}, 'treated': {}}
         for d in dict_dists.keys():
-            for k in ['dist', 'weighted_mrs', 'less_3', 'more_4']:
+            for k in dist_keys:
                 dict_dists[d][k] = []
         for i in range(n_models):
             for t in dict_dists.keys():
@@ -330,24 +332,23 @@ class IndividualPatientModel:
                 dict_dists[t]['less_3'].append(np.sum(dist[:3]))
                 # Get untreated and treated distributions for mRS >4
                 dict_dists[t]['more_4'].append(np.sum(dist[5:]))
+                # Distributions for independent, dependent, and dead:
+                dict_dists[t]['independent'].append(np.sum(dist[:3]))
+                dict_dists[t]['dependent'].append(np.sum(dist[3:6]))
+                dict_dists[t]['dead'].append(dist[6])
+                
             improvement.append(np.array(dict_dists['untreated']['weighted_mrs'][i]) -
                                np.array(dict_dists['treated']['weighted_mrs'][i]))
 
+        # Store the mRS dist from each model before averaging:
+        self.untreated_dist_each_model = dict_dists['untreated']['dist']
+        self.treated_dist_each_model = dict_dists['treated']['dist']
         # Calculate and store the mean, std and CI of the following 
         # arrays using attribute names from the dict keys:
-        dict_arrays = {
-            'untreated_dist': np.array(dict_dists['untreated']['dist']),
-            'treated_dist': np.array(dict_dists['treated']['dist']),
-            'untreated_less_3': np.array(dict_dists['untreated']['less_3']),
-            'treated_less_3': np.array(dict_dists['treated']['less_3']),
-            'untreated_more_4': np.array(dict_dists['untreated']['more_4']),
-            'treated_more_4': np.array(dict_dists['treated']['more_4']),
-            'untreated_weighted_mrs': (
-                np.array(dict_dists['untreated']['weighted_mrs'])),
-            'treated_weighted_mrs': (
-                np.array(dict_dists['treated']['weighted_mrs'])),
-            'improvement': np.array(improvement),
-        }
+        dict_arrays = {'improvement': np.array(improvement)}
+        for t in ['untreated', 'treated']:
+            for d in dist_keys:
+                dict_arrays[f'{t}_{d}'] = np.array(dict_dists[t][d])
         for key, arr in dict_arrays.items():
             m, s, c = calculate_mean_std_ci(arr, n_models)
             setattr(self, key, m)
@@ -365,10 +366,13 @@ class IndividualPatientModel:
             setattr(self, key, m)
             setattr(self, f'{key}_std', s)
             setattr(self, f'{key}_ci', c)
-        
-        # Call plotting function
-        self.plot_patient_results(patient, save, filename, anon)
-        return self.results_fig
+
+        if make_plot:
+            # Call plotting function
+            self.plot_patient_results(patient, save, filename, anon)
+            return self.results_fig
+        else:
+            pass
         
 
     def train_models(self, replicates):
