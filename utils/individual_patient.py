@@ -116,7 +116,7 @@ class IndividualPatientModel:
         patient_text += 'Of 100 patients like\nthis, how many would receive IVT:\n\n'
         prediction = np.round(self.thrombolysis_prediction * 100, 0)
         patient_text += f'This hospital = {prediction:0.0f}\n'
-        prediction = np.round(self.thrombolysis_choice_benchmark_mean * 100, 0)
+        prediction = np.round(self.thrombolysis_choice_benchmark * 100, 0)
         patient_text += f'Benchmark hospitals = {prediction:0.0f}\n'
 
         patient_text = patient_text + f'\n\nLIKELY OUTCOME (mean ± 95% confidence interval)\n'
@@ -246,7 +246,7 @@ class IndividualPatientModel:
             a = []
             for i in range(len(choice_models)):
                 model = choice_models[i]
-                a.append(model.predict_proba(p)[:,1])
+                a.append(model.predict_proba(p)[:, 1])
             return a
 
         def calculate_mean_std_ci(arr, n):
@@ -261,7 +261,7 @@ class IndividualPatientModel:
                 s = np.std(arr)
             sem = s / np.sqrt(n)
             ci = sem * scipy.stats.t.ppf((1 + 0.95) / 2., n-1)
-            return m, s, c
+            return m, s, ci
 
         patient = pd.DataFrame(patient_data, index=[0])
 
@@ -270,11 +270,15 @@ class IndividualPatientModel:
         fields.remove('thrombolysis')
         patient_choice = set_up_patient(patient, fields)
         thrombolysis_predictions = predict(self.choice_models, patient_choice)
+        # Convert to 1D list:
+        thrombolysis_predictions = np.array(thrombolysis_predictions).flatten()
         # Stats:
         key = 'thrombolysis_prediction'
-        self[key], self[f'{key}_std'], self[f'{key}_ci'] = (
-            calculate_mean_std_ci(np.array(thrombolysis_predictions),
-                                  len(thrombolysis_predictions)))
+        m, s, c = calculate_mean_std_ci(thrombolysis_predictions,
+                                        len(thrombolysis_predictions))
+        setattr(self, key, m)
+        setattr(self, f'{key}_std', s)
+        setattr(self, f'{key}_ci', c)
         
         # Get benchmark thrombolysis predictions
         benchmark_predictions = []
@@ -293,9 +297,11 @@ class IndividualPatientModel:
             benchmark_predictions.append(benchmark_prediction)
         # Stats:
         key = 'thrombolysis_choice_benchmark'
-        self[key], self[f'{key}_std'], self[f'{key}_ci'] = (
-            calculate_mean_std_ci(np.array(benchmark_predictions),
-                                  len(benchmark_predictions)))
+        m, s, c = calculate_mean_std_ci(np.array(benchmark_predictions),
+                                        len(benchmark_predictions))
+        setattr(self, key, m)
+        setattr(self, f'{key}_std', s)
+        setattr(self, f'{key}_ci', c)
 
         # Get thrombolysis outcome prediction
         improvement = []
@@ -324,8 +330,8 @@ class IndividualPatientModel:
                 dict_dists[t]['less_3'].append(np.sum(dist[:3]))
                 # Get untreated and treated distributions for mRS >4
                 dict_dists[t]['more_4'].append(np.sum(dist[5:]))
-            improvement.append(0-(dict_dists['treated']['weighted_mrs'] -
-                                  dict_dists['untreated']['weighted_mrs']))
+            improvement.append(np.array(dict_dists['untreated']['weighted_mrs'][i]) -
+                               np.array(dict_dists['treated']['weighted_mrs'][i]))
 
         # Calculate and store the mean, std and CI of the following 
         # arrays using attribute names from the dict keys:
@@ -343,8 +349,10 @@ class IndividualPatientModel:
             'improvement': np.array(improvement),
         }
         for key, arr in dict_arrays.items():
-            self[key], self[f'{key}_std'], self[f'{key}_ci'] = (
-                calculate_mean_std_ci(arr, n_models))
+            m, s, c = calculate_mean_std_ci(arr, n_models)
+            setattr(self, key, m)
+            setattr(self, f'{key}_std', s)
+            setattr(self, f'{key}_ci', c)
         # Second round now that some bits have been calculated:
         dict_arrays = {
             'change_in_less_3': (np.array(self.treated_less_3) -
@@ -353,8 +361,10 @@ class IndividualPatientModel:
                                  np.array(self.untreated_more_4)),
         }
         for key, arr in dict_arrays.items():
-            self[key], self[f'{key}_std'], self[f'{key}_ci'] = (
-                calculate_mean_std_ci(arr, n_models))
+            m, s, c = calculate_mean_std_ci(arr, n_models)
+            setattr(self, key, m)
+            setattr(self, f'{key}_std', s)
+            setattr(self, f'{key}_ci', c)
         
         # Call plotting function
         self.plot_patient_results(patient, save, filename, anon)
